@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ornlneutronimaging/qingge.svg?branch=master)](https://travis-ci.org/ornlneutronimaging/qingge)
+
 # QingGe's workflow
 
 * **step1**  Use Excel to convert VDrive output to inputs suitable for MTEX
