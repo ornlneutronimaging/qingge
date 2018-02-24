@@ -23,3 +23,20 @@
   - Now edit the script
     - mtex has a bug. change specimen symmetry to appropiate one.
       ex: 'triclinic' for Fe   ( ss = symmetry('triclinic')
+
+
+**Files format**
+
+**VDRivesSPF-78901-79020.txt**
+
+ first row: names of following columns
+ 
+ Run_number
+
+GoodFit_Ni111_1    ChiSq_Ni111_1    d_Ni111_1    ed_Ni111_1    Tof_Ni111_1    eTof_Ni111_1    I/V_Ni111_1    eI/V_Ni111_1    I/V1_Ni111_1    eI/V1_Ni111_1    B/V_Ni111_1    eB/V_Ni111_1    Sig^2_Ni111_1    eSig^2_Ni111_1    Gam_Ni111_1    eGam_Ni111_1    FWHM_Ni111_1    eFWHM_Ni111_1    Strain_Ni111_1    eStrain_Ni111_1
+
+and then this repeat for each Element and hkl
+
+The excel spreadsheet seems to only used the I/V and eI/V
+
+The **_1** and **_2** stands for bank1 and bank2
