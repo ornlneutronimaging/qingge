@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/ornlneutronimaging/qingge.svg?branch=master)](https://travis-ci.org/ornlneutronimaging/qingge)
 [![codecov](https://codecov.io/gh/ornlneutronimaging/qingge/branch/master/graph/badge.svg)](https://codecov.io/gh/ornlneutronimaging/qingge)
+[![Documentation Status](https://readthedocs.com/projects/ornl-qingge/badge/?version=latest)](https://ornl-qingge.readthedocs-hosted.com/en/latest/?badge=latest)
 
 
 # QingGe's workflow
