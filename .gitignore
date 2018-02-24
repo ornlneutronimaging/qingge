@@ -1,0 +1,29 @@
+__pycache__
+
+*.py[cod]
+
+.ipynb*
+.coverage
+/cover/*
+
+# mac
+.DS_Store
+
+.cache
+
+# Packages
+*.egg
+*.egg-info
+dist
+build
+eggs
+parts
+bin
+var
+sdist
+MANIFEST
+
+# Unit test / coverage reports
+.coverage 
+
+.idea/
