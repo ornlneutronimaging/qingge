@@ -38,6 +38,6 @@ class TestVDriveHandler(unittest.TestCase):
 
         # checking column 2
         # expected_data_col2 = list_
-        returned_data_col2 = list(return_vdrive_raw_data.column[2])
+        #returned_data_col2 = list(return_vdrive_raw_data.column[2])
 
 
