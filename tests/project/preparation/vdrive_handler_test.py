@@ -71,3 +71,5 @@ class TestVDriveHandler(unittest.TestCase):
         o_vdrive.load_vdrive(filename=vdrive_file)
         o_vdrive.keep_columns_of_interest()
         o_vdrive.isolating_banks()
+
+        bank1 = o_vdrive.data.bank1

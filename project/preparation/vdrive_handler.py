@@ -21,7 +21,27 @@ class VDriveHandler(object):
         self.data = Data()
 
     def isolating_banks(self):
-        pass
+        _raw_data = self.data.raw
+
+        bank1_string = r'^\w*1$'
+        bank2_string = r'^\w*2$'
+
+        bank1_columns = []
+        bank2_columns = []
+
+        full_list_name_of_columns = self.data.raw.columns.values
+        for _index, _label in enumerate(full_list_name_of_columns):
+            m_bank1 = re.match(bank1_string, _label)
+            if m_bank1:
+                bank1_columns.append(_label)
+                continue
+
+            m_bank2 = re.match(bank2_string, _label)
+            if m_bank2:
+                bank2_columns.append(_label)
+
+        self.data.bank1 = _raw_data.filter(bank1_columns)
+        self.data.bank2 = _raw_data.filter(bank2_columns)
 
     def keep_columns_of_interest(self):
         """We want to only keep the I/V and eI/V columns"""
