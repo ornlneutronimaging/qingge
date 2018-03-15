@@ -6,13 +6,16 @@ import re
 
 class VDriveHandler(object):
 
-    RawBank1 = namedtuple('RawBank1', ['filename', 'data'])
-    RawBank2 = namedtuple('RawBank2', ['filename', 'data'])
+    Data = namedtuple('Data', ['raw', 'bank1', 'bank2', 'filename'])
+
+    _raw_data = None
+    _filename = ''
 
     def __init__(self):
-        pass
+        self._raw_data = None
+        self._filename = ''
 
-    def load_vdrive(self, filename='', bank=1):
+    def load_vdrive(self, filename=''):
         """load the VDrive file"""
 
         if filename == '':
@@ -21,21 +24,10 @@ class VDriveHandler(object):
         if not os.path.exists(filename):
             raise ValueError("File does not exist: {}".format(filename))
 
-        if not bank in [1, 2]:
-            raise ValueError("Bank {} is not implemented!".format(bank))
-
-
-        _raw_data = pd.read_csv(filename,
-                                sep='\t',
-                               index_col=0)
-
-        if bank == 1:
-            self.raw_bank1 = self.RawBank1(filename=filename,
-                                      data=_raw_data)
-        else:
-            self.raw_bank1 = self.RawBank1(filename=filename,
-                                         data=_raw_data)
-
+        self._filename = filename
+        self._raw_data = pd.read_csv(filename,
+                                     sep='\t',
+                                     index_col=0)
 
     def keep_columns_of_interest(self):
         """We want to only keep the I/V and eI/V columns"""

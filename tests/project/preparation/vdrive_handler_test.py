@@ -25,35 +25,19 @@ class TestVDriveHandler(unittest.TestCase):
         o_vdrive = VDriveHandler()
         self.assertRaises(ValueError, o_vdrive.load_vdrive, vdrive_file)
 
-    def test_bank_correctly_defined(self):
-        '''assert bank is 1 or 2'''
-        o_vdrive = VDriveHandler()
-        self.bank1_filename = os.path.join(self.data_path, 'vdrive_filename.txt')
-        self.assertRaises(ValueError, o_vdrive.load_vdrive,
-                          filename=self.bank1_filename,
-                          bank=3)
-
     def test_vdrive_correctly_loaded(self):
         """assert raw VDrive file is correctly loaded"""
-
-        # bank 1
-        bank1_file = self.bank1_filename
+        filename = self.bank1_filename
         o_vdrive = VDriveHandler()
-        o_vdrive.load_vdrive(filename=bank1_file, bank=1)
-        filename_saved = o_vdrive.raw_bank1.filename
-        self.assertEqual(filename_saved, bank1_file)
-        data_saved = o_vdrive.raw_bank1.data
-        first_runs_saved = list(data_saved.index[0:9])
+        o_vdrive.load_vdrive(filename=filename)
+        filename_saved = o_vdrive._filename
+        self.assertEqual(filename_saved, filename)
+
+        _data = o_vdrive._raw_data
+        first_runs = list(_data.index[0:9])
         first_runs_expected = list(np.arange(78901.0, 78910.0))
-        self.assertEqual(first_runs_expected, first_runs_saved
-                         )
-    #     returned_vdrive_raw_data = o_vdrive.pd_vdrive_raw_data
-    #
-    #     # checking index (list of runs)
-    #     expected_runs_0_10 = list(np.arange(78901.0, 78910.0))
-    #     returned_runs_0_10 = list(returned_vdrive_raw_data.index[0:9])
-    #     self.assertEqual(expected_runs_0_10, returned_runs_0_10)
-    # #
+        self.assertEqual(first_runs_expected, first_runs)
+
     # def test_vdrive_data_correctly_cleaned(self):
     #     """assert vdrive data keeps only the columns of interest (I/V and eI/V)"""
     #     vdrive_file = self.vdrive_filename
