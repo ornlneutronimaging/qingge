@@ -23,14 +23,14 @@ class VDriveHandler(object):
     def isolating_banks(self):
         _raw_data = self.data.raw
 
-        bank1_string = r'^\w*1$'
-        bank2_string = r'^\w*2$'
+        bank1_string = r'^\w*/\w*_\w*_1$'
+        bank2_string = r'^\w*/\w*_\w*_2$'
 
         bank1_columns = []
         bank2_columns = []
 
         full_list_name_of_columns = self.data.raw.columns.values
-        for _index, _label in enumerate(full_list_name_of_columns):
+        for _label in full_list_name_of_columns:
             m_bank1 = re.match(bank1_string, _label)
             if m_bank1:
                 bank1_columns.append(_label)

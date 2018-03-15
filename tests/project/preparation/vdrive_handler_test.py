@@ -1,6 +1,7 @@
 import unittest
 import os
 import numpy as np
+import pprint
 import re
 
 from project.preparation.vdrive_handler import VDriveHandler
@@ -72,4 +73,14 @@ class TestVDriveHandler(unittest.TestCase):
         o_vdrive.keep_columns_of_interest()
         o_vdrive.isolating_banks()
 
-        bank1 = o_vdrive.data.bank1
+        bank1_columns_values = o_vdrive.data.bank1.columns.values
+        bank1_columns_expected = ['I/V_Ni111_1', 'eI/V_Ni111_1',
+                                  'I/V_Ni200_1', 'eI/V_Ni200_1',
+                                  'I/V_Ni220_1', 'eI/V_Ni220_1']
+        self.assertTrue((bank1_columns_values[0:6] == bank1_columns_expected).all())
+
+        bank2_columns_values = o_vdrive.data.bank2.columns.values
+        bank2_columns_expected = ['I/V_Ni111_2', 'eI/V_Ni111_2',
+                                  'I/V_Ni200_2', 'eI/V_Ni200_2',
+                                  'I/V_Ni220_2', 'eI/V_Ni220_2']
+        self.assertTrue((bank2_columns_values[0:6] == bank2_columns_expected).all())
