@@ -20,7 +20,7 @@ class TestVDriveHandler(unittest.TestCase):
         self.assertRaises(ValueError, o_vdrive.load_vdrive)
 
     def test_vdrive_input_filename_should_exists(self):
-        """assert VDrive filename should exists"""
+        """assert error is raised when VDrive filename does not exists"""
         vdrive_file = 'do_not_exist.txt'
         o_vdrive = VDriveHandler()
         self.assertRaises(ValueError, o_vdrive.load_vdrive, vdrive_file)
@@ -30,10 +30,10 @@ class TestVDriveHandler(unittest.TestCase):
         filename = self.filename
         o_vdrive = VDriveHandler()
         o_vdrive.load_vdrive(filename=filename)
-        filename_saved = o_vdrive._filename
+        filename_saved = o_vdrive.data.filename
         self.assertEqual(filename_saved, filename)
 
-        _data = o_vdrive._raw_data
+        _data = o_vdrive.data.raw
         first_runs = list(_data.index[0:9])
         first_runs_expected = list(np.arange(78901.0, 78910.0))
         self.assertEqual(first_runs_expected, first_runs)
@@ -44,7 +44,7 @@ class TestVDriveHandler(unittest.TestCase):
         o_vdrive = VDriveHandler()
         o_vdrive.load_vdrive(filename=vdrive_file)
         o_vdrive.keep_columns_of_interest()
-        pd_vdrive_data = o_vdrive._data
+        pd_vdrive_data = o_vdrive.data.raw
         list_name_of_columns = pd_vdrive_data.columns.values
 
         # make sure there is a many IV as eIV columns
@@ -64,4 +64,10 @@ class TestVDriveHandler(unittest.TestCase):
 
         self.assertEqual(number_of_eIV_columns, number_of_IV_columns)
 
-
+    def test_isolating_banks(self):
+        """assert bank1 and bank2 data are correctly isolated"""
+        vdrive_file = self.filename
+        o_vdrive = VDriveHandler()
+        o_vdrive.load_vdrive(filename=vdrive_file)
+        o_vdrive.keep_columns_of_interest()
+        o_vdrive.isolating_banks()
