@@ -32,39 +32,44 @@ class VDriveHandler(object):
         self.bank1 = Bank()
         self.bank2 = Bank()
 
-    def initialize_xaxis(self):
+    def initialize_bank2_xaxis(self):
+        pass
 
-        # bank1
-        omega = np.arange(45, 95, 5)
-        psi = np.arange(0, 50, 5)
+    def initialize_bank1_xaxis(self):
+        omega = [np.int(_value) for _value in np.ones(12)*45]
 
-        hrot1 = list(np.arange(0, 360, 30))
+        psi = [np.int(_value) for _value in np.zeros(12)]
+
+        hrot1 = np.arange(0, 331, 30)
         hrot2 = hrot1[::-1]
-        hrot = hrot1 + hrot2
 
-        phi_1 = list(np.arange(330, 0, -30))
-        phi_2 = phi_1[::-1]
-        phi = [0] + list(phi_1) + list(phi_2) + [0]
-
-        omega_psi = zip(omega, psi)
-        hrot_phi = zip(hrot, phi)
+        phi1 = [0] + list(np.arange(330, 0, -30))
+        phi2 = phi1[::-1]
 
         full_omega = []
-        full_psi = []
         full_hrot = []
+        full_psi = []
         full_phi = []
 
-        for _omega, _psi in omega_psi:
-            for _hrot, _phi in hrot_phi:
-                full_omega.append(_omega)
-                full_psi.append(_psi)
-                full_hrot.append(_hrot)
-                full_phi.append(_phi)
+        omega_offset = np.arange(0, 46, 5)
+        for _offset in omega_offset:
+            full_omega.append(omega + _offset)
+            full_psi.append(psi + _offset)
 
-        self.bank1.omega = full_omega
-        self.bank1.psi = full_psi
-        self.bank1.hrot = full_hrot
-        self.bank1.phi = full_phi
+        _index = 0
+        while (_index < 46):
+            full_hrot.append(hrot1)
+            full_phi.append(phi1)
+
+            full_hrot.append(hrot2)
+            full_phi.append(phi2)
+
+            _index += 10
+
+        self.bank1.omega = np.reshape(np.transpose(full_omega), 120, 1)
+        self.bank1.psi = np.reshape(np.transpose(full_psi), 120, 1)
+        self.bank1.hrot = np.reshape(np.transpose(full_hrot), 120, 1)
+        self.bank1.phi = np.reshape(np.transpose(full_phi), 120, 1)
 
     def isolating_banks(self):
         _raw_data = self.data.raw
