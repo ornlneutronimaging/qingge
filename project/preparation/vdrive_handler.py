@@ -1,4 +1,4 @@
-from collections import namedtuple
+import numpy as np
 import os
 import pandas as pd
 import re
@@ -9,16 +9,51 @@ class Data(object):
     # pandas objects
     raw = None # just after loading the file
     cleaned = None  # only columns of interest
-    bank1 = None
-    bank2 = None
+    bank1 = None # only data from bank1
+    bank2 = None # only data from bank2
 
     filename = ''
 
+    omega = []
+    hrot = []
+    psi = []
+    phi = []
 
 class VDriveHandler(object):
 
     def __init__(self):
         self.data = Data()
+
+    def initialize_xaxis(self):
+        omega = np.arange(45, 95, 5)
+        psi = np.arange(0, 50, 5)
+
+        hrot1 = list(np.arange(0, 360, 30))
+        hrot2 = hrot1[::-1]
+        hrot = hrot1 + hrot2
+
+        phi_1 = list(np.arange(330, 0, -30))
+        phi_2 = phi_1[::-1]
+        phi = [0] + list(phi_1) + list(phi_2) + [0]
+
+        omega_psi = zip(omega, psi)
+        hrot_phi = zip(hrot, phi)
+
+        full_omega = []
+        full_psi = []
+        full_hrot = []
+        full_phi = []
+
+        for _omega, _psi in omega_psi:
+            for _hrot, _phi in hort_phi:
+                full_omega.append(_omega)
+                full_psi.append(_psi)
+                full_hrot.append(_hrot)
+                full_phi.append(_phi)
+
+
+
+
 
     def isolating_banks(self):
         _raw_data = self.data.raw
