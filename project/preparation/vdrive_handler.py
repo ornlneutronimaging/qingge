@@ -14,17 +14,27 @@ class Data(object):
 
     filename = ''
 
+
+class Bank(object):
+
     omega = []
     hrot = []
     psi = []
     phi = []
 
+    data = []
+
+
 class VDriveHandler(object):
 
     def __init__(self):
         self.data = Data()
+        self.bank1 = Bank()
+        self.bank2 = Bank()
 
     def initialize_xaxis(self):
+
+        # bank1
         omega = np.arange(45, 95, 5)
         psi = np.arange(0, 50, 5)
 
@@ -45,15 +55,16 @@ class VDriveHandler(object):
         full_phi = []
 
         for _omega, _psi in omega_psi:
-            for _hrot, _phi in hort_phi:
+            for _hrot, _phi in hrot_phi:
                 full_omega.append(_omega)
                 full_psi.append(_psi)
                 full_hrot.append(_hrot)
                 full_phi.append(_phi)
 
-
-
-
+        self.bank1.omega = full_omega
+        self.bank1.psi = full_psi
+        self.bank1.hrot = full_hrot
+        self.bank1.phi = full_phi
 
     def isolating_banks(self):
         _raw_data = self.data.raw
@@ -75,8 +86,8 @@ class VDriveHandler(object):
             if m_bank2:
                 bank2_columns.append(_label)
 
-        self.data.bank1 = _raw_data.filter(bank1_columns)
-        self.data.bank2 = _raw_data.filter(bank2_columns)
+        self.bank1.data = _raw_data.filter(bank1_columns)
+        self.bank2.data = _raw_data.filter(bank2_columns)
 
     def keep_columns_of_interest(self):
         """We want to only keep the I/V and eI/V columns"""

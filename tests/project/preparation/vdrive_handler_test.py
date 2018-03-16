@@ -73,14 +73,28 @@ class TestVDriveHandler(unittest.TestCase):
         o_vdrive.keep_columns_of_interest()
         o_vdrive.isolating_banks()
 
-        bank1_columns_values = o_vdrive.data.bank1.columns.values
+        bank1_columns_values = o_vdrive.bank1.data.columns.values
         bank1_columns_expected = ['I/V_Ni111_1', 'eI/V_Ni111_1',
                                   'I/V_Ni200_1', 'eI/V_Ni200_1',
                                   'I/V_Ni220_1', 'eI/V_Ni220_1']
         self.assertTrue((bank1_columns_values[0:6] == bank1_columns_expected).all())
 
-        bank2_columns_values = o_vdrive.data.bank2.columns.values
+        bank2_columns_values = o_vdrive.bank2.data.columns.values
         bank2_columns_expected = ['I/V_Ni111_2', 'eI/V_Ni111_2',
                                   'I/V_Ni200_2', 'eI/V_Ni200_2',
                                   'I/V_Ni220_2', 'eI/V_Ni220_2']
         self.assertTrue((bank2_columns_values[0:6] == bank2_columns_expected).all())
+
+    def test_omega_initialization(self):
+        """assert omega correctly created"""
+        o_vdrive = VDriveHandler()
+        o_vdrive.initialize_xaxis()
+        omega_created = o_vdrive.bank1.omega
+        print(omega_created)
+        index_tested = [0, 5, 12, 19, 24, 36, 49, 67, 79, 89]
+        omega_expected = [45, 45, 50, 50, 55, 60, 65, 70, 75, 80]
+        omega_returned = [omega_created[_index] for _index in index_tested]
+
+        print(omega_returned)
+
+        self.assertTrue(False)
