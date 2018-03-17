@@ -24,6 +24,7 @@ class Bank(object):
 
     data = []
 
+    sin_omega = []
 
 class VDriveHandler(object):
 
@@ -31,6 +32,21 @@ class VDriveHandler(object):
         self.data = Data()
         self.bank1 = Bank()
         self.bank2 = Bank()
+
+    def calculate_sin_omega(self):
+        """sin(Pi()/180 * omega"""
+
+        #bank1
+        bank1_omega = self.bank1.omega
+        bank1_omega_rad = np.radians(bank1_omega)
+        bank1_sin_omega = np.sin(bank1_omega_rad)
+        self.bank1.sin_omega = bank1_sin_omega
+
+        # bank2
+        bank2_omega = self.bank2.omega
+        bank2_omega_rad = np.radians(bank2_omega)
+        bank2_sin_omega = np.sin(bank2_omega_rad)
+        self.bank2.sin_omega = bank2_sin_omega
 
     def initialize_bank_xaxis(self):
         self.initialize_bank1_xaxis()

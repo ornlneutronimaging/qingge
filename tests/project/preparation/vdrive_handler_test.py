@@ -15,6 +15,9 @@ class TestVDriveHandler(unittest.TestCase):
                                                       '../../data/'))
         self.filename = os.path.join(self.data_path, 'vdrive_filename.txt')
 
+        # max diff allowed to compare two arrays
+        self.maxDiff = 0.000001
+
     def test_vdrive_input_filename_should_not_be_empty(self):
         """assert VDrive filename should not be empty"""
         o_vdrive = VDriveHandler()
@@ -184,3 +187,22 @@ class TestVDriveHandler(unittest.TestCase):
         phi_expected = [180, 30, 210, 60, 180, 210, 150, 60, 330, 0, 30, 300]
         phi_returned = [phi_created[_index] for _index in index_tested]
         self.assertEqual(phi_expected, phi_returned)
+
+    def test_sin_omega(self):
+        """assert sin omega is working"""
+        o_vdrive = VDriveHandler()
+        o_vdrive.initialize_bank_xaxis()
+        o_vdrive.calculate_sin_omega()
+
+        # bank1
+        sin_omega_bank1_returned = o_vdrive.bank1.sin_omega
+        omega_bank1 = o_vdrive.bank1.omega
+        sin_omega_bank1_expected = [np.sin(np.pi*_omega/180.) for _omega in omega_bank1]
+        self.assertTrue((sin_omega_bank1_expected == sin_omega_bank1_returned).all())
+
+        # bank2
+        sin_omega_bank2_returned = o_vdrive.bank2.sin_omega
+        omega_bank2 = o_vdrive.bank2.omega
+        sin_omega_bank2_expected = [np.sin(np.pi*_omega/180.) for _omega in omega_bank2]
+        self.assertTrue((sin_omega_bank2_expected == sin_omega_bank2_returned).all())
+
