@@ -23,8 +23,10 @@ class Bank(object):
     phi = []
 
     data = []
+    data_min_omega_45 = [] #min of all omega=45
 
     sin_omega = []
+
 
 class VDriveHandler(object):
 
@@ -158,6 +160,22 @@ class VDriveHandler(object):
 
         self.bank1.data = _raw_data.filter(bank1_columns)
         self.bank2.data = _raw_data.filter(bank2_columns)
+
+    def calculating_mean_omega_45(self):
+        """calculate the mean of all data sets for omega = 45"""
+        # bank1
+        bank1_data = self.bank1.data
+        if len(bank1_data) == 0:
+            self.bank1.data_min_omega_45 = []
+            self.bank2.data_min_omega_45 = []
+            return
+
+        bank1_omega_45 = bank1_data[0:12, :]
+        print(np.shape(bank1_omega_45))
+        # bank1_mean_omega_45 = np.mean(bank1_data[0: 12])
+        # print(np.shape(bank1_mean_omega_45))
+
+
 
     def keep_columns_of_interest(self):
         """We want to only keep the I/V and eI/V columns"""

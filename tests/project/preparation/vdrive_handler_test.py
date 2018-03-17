@@ -206,3 +206,16 @@ class TestVDriveHandler(unittest.TestCase):
         sin_omega_bank2_expected = [np.sin(np.pi*_omega/180.) for _omega in omega_bank2]
         self.assertTrue((sin_omega_bank2_expected == sin_omega_bank2_returned).all())
 
+    def test_mean_omega_45(self):
+        """assert mean omega 45 works correctly"""
+        o_vdrive = VDriveHandler()
+        o_vdrive.calculating_mean_omega_45()
+        self.assertEqual(o_vdrive.bank1.data_min_omega_45, [])
+        self.assertEqual(o_vdrive.bank2.data_min_omega_45, [])
+
+        vdrive_file = self.filename
+        o_vdrive = VDriveHandler()
+        o_vdrive.load_vdrive(filename=vdrive_file)
+        o_vdrive.keep_columns_of_interest()
+        o_vdrive.isolating_banks()
+        o_vdrive.calculating_mean_omega_45()
