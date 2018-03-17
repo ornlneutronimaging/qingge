@@ -32,6 +32,10 @@ class VDriveHandler(object):
         self.bank1 = Bank()
         self.bank2 = Bank()
 
+    def initialize_bank_xaxis(self):
+        self.initialize_bank1_xaxis()
+        self.initialize_bank2_xaxis()
+
     def initialize_bank2_xaxis(self):
         # initialization
         omega = [np.int(_value) for _value in np.ones(12) * 45]
