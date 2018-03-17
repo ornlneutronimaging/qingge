@@ -111,3 +111,28 @@ class TestVDriveHandler(unittest.TestCase):
         phi_returned = [phi_created[_index] for _index in index_tested]
         self.assertEqual(phi_expected, phi_returned)
 
+    def test_bank2_axis_initialization(self):
+        """assert bank2 omega, hrot, psi and phi are correctly created"""
+        o_vdrive = VDriveHandler()
+        o_vdrive.initialize_bank2_xaxis()
+        index_tested = [0, 5, 12, 19, 24, 36, 49, 67, 79, 89, 101, 111]
+
+        omega_created = o_vdrive.bank2.omega
+        omega_expected = [45, 45, 50, 50, 55, 60, 65, 70, 75, 80, 85, 90]
+        omega_returned = [omega_created[_index] for _index in index_tested]
+        self.assertEqual(omega_expected, omega_returned)
+
+        hrot_created = o_vdrive.bank2.hrot
+        hrot_expected = [0, 150, 330, 120, 0, 330, 30, 120, 210, 180, 150, 240]
+        hrot_returned = [hrot_created[_index] for _index in index_tested]
+        self.assertEqual(hrot_expected, hrot_returned)
+
+        psi_created = o_vdrive.bank2.psi
+        psi_expected = [90, 90, 85, 85, 80, 75, 70, 65, 60, 55, 50, 45]
+        psi_returned = [psi_created[_index] for _index in index_tested]
+        self.assertEqual(psi_expected, psi_returned)
+
+        phi_created = o_vdrive.bank2.phi
+        phi_expected = [180, 30, 210, 60, 180, 210, 150, 60, 330, 0, 30, 300]
+        phi_returned = [phi_created[_index] for _index in index_tested]
+        self.assertEqual(phi_expected, phi_returned)

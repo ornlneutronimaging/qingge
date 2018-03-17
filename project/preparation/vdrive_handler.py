@@ -33,14 +33,53 @@ class VDriveHandler(object):
         self.bank2 = Bank()
 
     def initialize_bank2_xaxis(self):
+        # initialization
         omega = [np.int(_value) for _value in np.ones(12) * 45]
 
         hrot1 = np.arange(0, 331, 30)
         hrot2 = hrot1[::-1]
 
+        psi_init = np.ones(12) * 90
+        psi = [np.int(_value) for _value in psi_init]
 
+        phia = np.arange(180, -1, -30)
+        phib = np.arange(330, 180, -30)
+        phi1 = list(phia) + list(phib)
+        phi2 = phi1[::-1]
+
+        # full definition
+        full_omega = []
+        full_hrot = []
+        full_psi = []
+        full_phi = []
+
+        omega_offset = np.arange(0, 46, 5)
+        for _offset in omega_offset:
+            full_omega.append(omega + _offset)
+
+        hrot_offset = 0
+        while (hrot_offset < 5):
+            full_hrot.append(hrot1)
+            full_hrot.append(hrot2)
+            hrot_offset += 1
+
+        psi_offset = np.arange(0, 46, 5)
+        for _offset in psi_offset:
+            full_psi.append(psi - _offset)
+
+        phi_offset = 0
+        while (phi_offset < 5):
+            full_phi.append(phi1)
+            full_phi.append(phi2)
+            phi_offset += 1
+
+        self.bank2.omega = np.reshape(np.transpose(full_omega), 120, 1)
+        self.bank2.hrot = np.reshape(np.transpose(full_hrot), 120, 1)
+        self.bank2.psi = np.reshape(np.transpose(full_psi), 120, 1)
+        self.bank2.phi = np.reshape(np.transpose(full_phi), 120, 1)
 
     def initialize_bank1_xaxis(self):
+        # initialization
         omega = [np.int(_value) for _value in np.ones(12)*45]
 
         psi = [np.int(_value) for _value in np.zeros(12)]
@@ -56,6 +95,7 @@ class VDriveHandler(object):
         full_psi = []
         full_phi = []
 
+        # full definition
         omega_offset = np.arange(0, 46, 5)
         for _offset in omega_offset:
             full_omega.append(omega + _offset)
@@ -72,8 +112,8 @@ class VDriveHandler(object):
             _index += 10
 
         self.bank1.omega = np.reshape(np.transpose(full_omega), 120, 1)
-        self.bank1.psi = np.reshape(np.transpose(full_psi), 120, 1)
         self.bank1.hrot = np.reshape(np.transpose(full_hrot), 120, 1)
+        self.bank1.psi = np.reshape(np.transpose(full_psi), 120, 1)
         self.bank1.phi = np.reshape(np.transpose(full_phi), 120, 1)
 
     def isolating_banks(self):
