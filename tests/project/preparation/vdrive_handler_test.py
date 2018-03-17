@@ -88,7 +88,7 @@ class TestVDriveHandler(unittest.TestCase):
     def test_bank1_axis_initialization(self):
         """assert bank1 hrot, omega, psi and phi are correctly created"""
         o_vdrive = VDriveHandler()
-        o_vdrive.initialize_xaxis()
+        o_vdrive.initialize_bank1_xaxis()
         index_tested = [0, 5, 12, 19, 24, 36, 49, 67, 79, 89, 101, 111]
 
         omega_created = o_vdrive.bank1.omega
