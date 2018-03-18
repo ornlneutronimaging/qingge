@@ -227,4 +227,24 @@ class TestVDriveHandler(unittest.TestCase):
         for _returned, _expected in _returned_expected:
             self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)
 
+    def test_stdev_omega_45(self):
+        """assert std dev omega 45 works correctly"""
+        o_vdrive = VDriveHandler()
+        o_vdrive.calculating_stdev_omega_45()
+        self.assertEqual(o_vdrive.bank1.data_stdev_omega_45, [])
+
+        vdrive_file = self.filename
+        o_vdrive = VDriveHandler()
+        o_vdrive.load_vdrive(filename=vdrive_file)
+        o_vdrive.keep_columns_of_interest()
+        o_vdrive.isolating_banks()
+        o_vdrive.calculating_stdev_omega_45()
+
+        std_omega_45_returned = o_vdrive.bank1.data_stdev_omega_45
+        std_omega_45_expected = [0.26040127, 0.00570957, 0.33226091,
+                                 0.00823368, 0.05788931, 0.00171215]
+
+        _returned_expected = zip(std_omega_45_returned[0:6], std_omega_45_expected)
+        for _returned, _expected in _returned_expected:
+            self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)
 

@@ -23,7 +23,8 @@ class Bank(object):
     phi = []
 
     data = []
-    data_mean_omega_45 = [] #mean of all omega=45
+    data_mean_omega_45 = [] # mean of all omega=45
+    data_stdev_omega_45 = [] # stdev of all omega=45
 
     sin_omega = []
 
@@ -34,6 +35,13 @@ class VDriveHandler(object):
         self.data = Data()
         self.bank1 = Bank()
         self.bank2 = Bank()
+
+    def run(self):
+        # full process
+        self.keep_columns_of_interest()
+        self.isolating_banks()
+        self.calculating_mean_omega_45()
+        self.calculating_stdev_omega_45()
 
     def calculate_sin_omega(self):
         """sin(Pi()/180 * omega"""
@@ -171,6 +179,16 @@ class VDriveHandler(object):
 
         bank1_omega_45 = np.array(bank1_data)[0:12, :]
         self.bank1.data_mean_omega_45 = np.mean(bank1_omega_45, 0)
+
+    def calculating_stdev_omega_45(self):
+        """calculating std dev of all data sets for omega 45"""
+        bank1_data = self.bank1.data
+        if len(bank1_data) == 0:
+            self.bank1.data_stdev_omega_45 = []
+            return
+
+        bank1_omega_45 = np.array(bank1_data)[0:12, :]
+        self.bank1.data_stdev_omega_45 = np.std(bank1_omega_45, 0, ddof=1)
 
     def keep_columns_of_interest(self):
         """We want to only keep the I/V and eI/V columns"""
