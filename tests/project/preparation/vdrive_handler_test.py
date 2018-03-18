@@ -210,8 +210,7 @@ class TestVDriveHandler(unittest.TestCase):
         """assert mean omega 45 works correctly"""
         o_vdrive = VDriveHandler()
         o_vdrive.calculating_mean_omega_45()
-        self.assertEqual(o_vdrive.bank1.data_min_omega_45, [])
-        self.assertEqual(o_vdrive.bank2.data_min_omega_45, [])
+        self.assertEqual(o_vdrive.bank1.data_mean_omega_45, [])
 
         vdrive_file = self.filename
         o_vdrive = VDriveHandler()
@@ -219,3 +218,13 @@ class TestVDriveHandler(unittest.TestCase):
         o_vdrive.keep_columns_of_interest()
         o_vdrive.isolating_banks()
         o_vdrive.calculating_mean_omega_45()
+
+        mean_omega_45_returned = o_vdrive.bank1.data_mean_omega_45
+        mean_omega_45_expected = [2.451589167, 0.054312417, 2.399450833,
+                                  0.053232583, 0.841268417, 0.01754925]
+
+        _returned_expected = zip(mean_omega_45_expected[0:6], mean_omega_45_returned)
+        for _returned, _expected in _returned_expected:
+            self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)
+
+

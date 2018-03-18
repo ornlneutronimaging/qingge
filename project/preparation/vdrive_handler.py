@@ -23,7 +23,7 @@ class Bank(object):
     phi = []
 
     data = []
-    data_min_omega_45 = [] #min of all omega=45
+    data_mean_omega_45 = [] #mean of all omega=45
 
     sin_omega = []
 
@@ -166,16 +166,11 @@ class VDriveHandler(object):
         # bank1
         bank1_data = self.bank1.data
         if len(bank1_data) == 0:
-            self.bank1.data_min_omega_45 = []
-            self.bank2.data_min_omega_45 = []
+            self.bank1.data_mean_omega_45 = []
             return
 
-        bank1_omega_45 = bank1_data[0:12, :]
-        print(np.shape(bank1_omega_45))
-        # bank1_mean_omega_45 = np.mean(bank1_data[0: 12])
-        # print(np.shape(bank1_mean_omega_45))
-
-
+        bank1_omega_45 = np.array(bank1_data)[0:12, :]
+        self.bank1.data_mean_omega_45 = np.mean(bank1_omega_45, 0)
 
     def keep_columns_of_interest(self):
         """We want to only keep the I/V and eI/V columns"""
