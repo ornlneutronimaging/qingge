@@ -13,7 +13,7 @@
   - They are converted by Excel (Ducu created formulas here) to something suitable for mtex (copy and paste bank1 and bank2, and then there is a formula in excel to compute a table ("OutPut").
   - Copy the output to a text file (ducu.txt) (only first 4 columns are used, only first 2 are enough)
 
-* Run VULCAN2MTEX (fortran code) to convert ducu.txt. Output vulcan2.rpf
+* Run VULCAN2MTEX (fortran code) to convert ducu.txt. Output vulcan.rpf
   This program performs some linear interpolation as well as the format of the file
 
 * Use MTEX to generate several thousand grain orientations (pole figures). 
@@ -29,6 +29,9 @@
     - mtex has a bug. change specimen symmetry to appropiate one.
       ex: 'triclinic' for Fe   ( ss = symmetry('triclinic')
 
+* Use ???? (fortran code) to calculate Bragg Edge profile
+  - inputs: texture
+  - structure factors are harded-coded in the fortran code
 
 **Files format**
 
