@@ -30,6 +30,8 @@
       ex: 'triclinic' for Fe   ( ss = symmetry('triclinic')
 
 * Use ???? (fortran code) to calculate Bragg Edge profile
+  - inputs: texture
+  - structure factors are harded-coded in the fortran code
 
 **Files format**
 
