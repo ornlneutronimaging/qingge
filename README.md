@@ -29,6 +29,7 @@
     - mtex has a bug. change specimen symmetry to appropiate one.
       ex: 'triclinic' for Fe   ( ss = symmetry('triclinic')
 
+* Use ???? (fortran code) to calculate Bragg Edge profile
 
 **Files format**
 
