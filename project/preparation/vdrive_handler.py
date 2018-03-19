@@ -8,6 +8,8 @@ class Data(object):
 
     # pandas objects
     raw = None # just after loading the file
+    raw_iv = None # just I/V columns data
+    raw_eiv = None # just eI/V columns data
     cleaned = None  # only columns of interest
     bank1 = None # only data from bank1
     bank2 = None # only data from bank2
@@ -22,9 +24,14 @@ class Bank(object):
     psi = []
     phi = []
 
-    data = []
-    data_mean_omega_45 = [] # mean of all omega=45
-    data_stdev_omega_45 = [] # stdev of all omega=45
+    iv = []
+    eiv = []
+
+    iv_mean_omega_45 = [] # mean of all omega=45 for iv
+    eiv_mean_omega_45 = [] # mean of all omega=45 for eiv
+
+    iv_stdev_omega_45 = [] # stdev of all omega=45 for iv
+    eiv_stdev_omega_45 = [] # stdev of all omega=45 for eiv
 
     sin_omega = []
 
@@ -103,10 +110,13 @@ class VDriveHandler(object):
             full_phi.append(phi2)
             phi_offset += 1
 
-        self.bank2.omega = np.reshape(np.transpose(full_omega), 120, 1)
-        self.bank2.hrot = np.reshape(np.transpose(full_hrot), 120, 1)
-        self.bank2.psi = np.reshape(np.transpose(full_psi), 120, 1)
-        self.bank2.phi = np.reshape(np.transpose(full_phi), 120, 1)
+        [height, width] = np.shape(full_omega)
+        new_dim = height * width
+        
+        self.bank2.omega = np.reshape(np.transpose(full_omega), new_dim, 1)
+        self.bank2.hrot = np.reshape(np.transpose(full_hrot), new_dim, 1)
+        self.bank2.psi = np.reshape(np.transpose(full_psi), new_dim, 1)
+        self.bank2.phi = np.reshape(np.transpose(full_phi), new_dim, 1)
 
     def initialize_bank1_xaxis(self):
         # initialization
@@ -141,44 +151,77 @@ class VDriveHandler(object):
 
             _index += 10
 
-        self.bank1.omega = np.reshape(np.transpose(full_omega), 120, 1)
-        self.bank1.hrot = np.reshape(np.transpose(full_hrot), 120, 1)
-        self.bank1.psi = np.reshape(np.transpose(full_psi), 120, 1)
-        self.bank1.phi = np.reshape(np.transpose(full_phi), 120, 1)
+        [height, width] = np.shape(full_omega)
+        new_dim = height * width
+
+        self.bank1.omega = np.reshape(np.transpose(full_omega), new_dim, 1)
+        self.bank1.hrot = np.reshape(np.transpose(full_hrot), new_dim, 1)
+        self.bank1.psi = np.reshape(np.transpose(full_psi), new_dim, 1)
+        self.bank1.phi = np.reshape(np.transpose(full_phi), new_dim, 1)
 
     def isolating_banks(self):
-        _raw_data = self.data.raw
+        _raw_data_iv = self.data.raw_iv
+        _raw_data_eiv = self.data.raw_eiv
 
         bank1_string = r'^\w*/\w*_\w*_1$'
         bank2_string = r'^\w*/\w*_\w*_2$'
 
-        bank1_columns = []
-        bank2_columns = []
+        # working with iv
+        bank1_iv = []
+        bank2_iv = []
 
-        full_list_name_of_columns = self.data.raw.columns.values
+        full_list_name_of_columns = self.data.raw_iv.columns.values
         for _label in full_list_name_of_columns:
             m_bank1 = re.match(bank1_string, _label)
             if m_bank1:
-                bank1_columns.append(_label)
+                bank1_iv.append(_label)
                 continue
 
             m_bank2 = re.match(bank2_string, _label)
             if m_bank2:
-                bank2_columns.append(_label)
+                bank2_iv.append(_label)
 
-        self.bank1.data = _raw_data.filter(bank1_columns)
-        self.bank2.data = _raw_data.filter(bank2_columns)
+        self.bank1.iv = _raw_data_iv.filter(bank1_iv)
+        self.bank2.iv = _raw_data_iv.filter(bank2_iv)
+
+        # working with iv
+        bank1_eiv = []
+        bank2_eiv = []
+
+        full_list_name_of_columns = self.data.raw_eiv.columns.values
+        for _label in full_list_name_of_columns:
+            m_bank1 = re.match(bank1_string, _label)
+            if m_bank1:
+                bank1_eiv.append(_label)
+                continue
+
+            m_bank2 = re.match(bank2_string, _label)
+            if m_bank2:
+                bank2_eiv.append(_label)
+
+        self.bank1.eiv = _raw_data_eiv.filter(bank1_eiv)
+        self.bank2.eiv = _raw_data_eiv.filter(bank2_eiv)
 
     def calculating_mean_omega_45(self):
-        """calculate the mean of all data sets for omega = 45"""
-        # bank1
-        bank1_data = self.bank1.data
-        if len(bank1_data) == 0:
-            self.bank1.data_mean_omega_45 = []
+        """calculate the mean of all data sets for omega = 45 (only found in bank1)"""
+
+        # iv
+        iv_data = self.bank1.iv
+        if len(iv_data) == 0:
+            self.bank1.iv_mean_omega_45 = []
             return
 
-        bank1_omega_45 = np.array(bank1_data)[0:12, :]
-        self.bank1.data_mean_omega_45 = np.mean(bank1_omega_45, 0)
+        bank1_iv_omega_45 = np.array(iv_data)[0:12, :]
+        self.bank1.iv_mean_omega_45 = np.mean(bank1_iv_omega_45, 0)
+
+        # eiv
+        eiv_data = self.bank1.eiv
+        if len(eiv_data) == 0:
+            self.bank1.eiv_mean_omega_45 = []
+            return
+
+        bank1_eiv_omega_45 = np.array(eiv_data)[0:12, :]
+        self.bank1.eiv_mean_omega_45 = np.mean(bank1_eiv_omega_45, 0)
 
     def calculating_stdev_omega_45(self):
         """calculating std dev of all data sets for omega 45"""
@@ -193,16 +236,19 @@ class VDriveHandler(object):
     def keep_columns_of_interest(self):
         """We want to only keep the I/V and eI/V columns"""
         re_string = r'^I/V_\w*$'
-        name_of_columns_to_keep = []
+        name_of_iv_columns_to_keep = []
+        name_of_eiv_columns_to_keep = []
+
         full_list_name_of_columns = self.data.raw.columns.values
         pd_vdrive_raw_data = self.data.raw.copy()
         for _index, _label in enumerate(full_list_name_of_columns):
             m = re.match(re_string, _label)
             if m:
-                name_of_columns_to_keep.append(pd_vdrive_raw_data.columns.values[_index])
-                name_of_columns_to_keep.append(pd_vdrive_raw_data.columns.values[_index + 1])
+                name_of_iv_columns_to_keep.append(pd_vdrive_raw_data.columns.values[_index])
+                name_of_eiv_columns_to_keep.append(pd_vdrive_raw_data.columns.values[_index + 1])
 
-        self.data.raw = pd_vdrive_raw_data.filter(name_of_columns_to_keep)
+        self.data.raw_iv = pd_vdrive_raw_data.filter(name_of_iv_columns_to_keep)
+        self.data.raw_eiv = pd_vdrive_raw_data.filter(name_of_eiv_columns_to_keep)
 
     def load_vdrive(self, filename=''):
         """load the VDrive file"""

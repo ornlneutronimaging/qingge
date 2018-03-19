@@ -48,25 +48,30 @@ class TestVDriveHandler(unittest.TestCase):
         o_vdrive = VDriveHandler()
         o_vdrive.load_vdrive(filename=vdrive_file)
         o_vdrive.keep_columns_of_interest()
-        pd_vdrive_data = o_vdrive.data.raw
-        list_name_of_columns = pd_vdrive_data.columns.values
 
-        # make sure there is a many IV as eIV columns
-        number_of_IV_columns = 0
-        number_of_eIV_columns = 0
+        pd_vdrive_data_iv = o_vdrive.data.raw_iv
+        pd_vdrive_data_eiv = o_vdrive.data.raw_eiv
 
-        IV_re_string = r'^I/V_\w*$'
-        eIV_re_string = r'^eI/V_\w*$'
-        for _index, _label in enumerate(list_name_of_columns):
-            m_IV = re.match(IV_re_string, _label)
-            if m_IV:
-                number_of_IV_columns += 1
+        list_name_of_iv_columns = pd_vdrive_data_iv.columns.values
+        list_name_of_eiv_columns = pd_vdrive_data_eiv.columns.values
 
-            m_eIV = re.match(eIV_re_string, _label)
-            if m_eIV:
-                number_of_eIV_columns += 1
+        # make sure all the columns are iv or eiv
+        number_of_iv_columns = 0
+        number_of_eiv_columns = 0
 
-        self.assertEqual(number_of_eIV_columns, number_of_IV_columns)
+        iv_re_string = r'^I/V_\w*$'
+        for _index, _label in enumerate(list_name_of_iv_columns):
+            m_iv = re.match(iv_re_string, _label)
+            if m_iv:
+                number_of_iv_columns += 1
+        self.assertEqual(number_of_iv_columns, len(list_name_of_iv_columns))
+
+        eiv_re_string = r'^eI/V_\w*$'
+        for _index, _label in enumerate(list_name_of_eiv_columns):
+            m_eiv = re.match(eiv_re_string, _label)
+            if m_eiv:
+                number_of_eiv_columns += 1
+        self.assertEqual(number_of_eiv_columns, len(list_name_of_eiv_columns))
 
     def test_isolating_banks(self):
         """assert bank1 and bank2 data are correctly isolated"""
@@ -76,17 +81,43 @@ class TestVDriveHandler(unittest.TestCase):
         o_vdrive.keep_columns_of_interest()
         o_vdrive.isolating_banks()
 
-        bank1_columns_values = o_vdrive.bank1.data.columns.values
-        bank1_columns_expected = ['I/V_Ni111_1', 'eI/V_Ni111_1',
-                                  'I/V_Ni200_1', 'eI/V_Ni200_1',
-                                  'I/V_Ni220_1', 'eI/V_Ni220_1']
-        self.assertTrue((bank1_columns_values[0:6] == bank1_columns_expected).all())
+        # bank1
+        bank1_iv_columns_values = o_vdrive.bank1.iv.columns.values
+        bank1_iv_columns_expected = ['I/V_Ni111_1',
+                                     'I/V_Ni200_1',
+                                     'I/V_Ni220_1',
+                                     'I/V_Ni311_1',
+                                     'I/V_Ni222_1',
+                                     'I/V_Ni400_1']
+        self.assertTrue((bank1_iv_columns_values[0:6] == bank1_iv_columns_expected).all())
 
-        bank2_columns_values = o_vdrive.bank2.data.columns.values
-        bank2_columns_expected = ['I/V_Ni111_2', 'eI/V_Ni111_2',
-                                  'I/V_Ni200_2', 'eI/V_Ni200_2',
-                                  'I/V_Ni220_2', 'eI/V_Ni220_2']
-        self.assertTrue((bank2_columns_values[0:6] == bank2_columns_expected).all())
+        bank1_eiv_columns_values = o_vdrive.bank1.eiv.columns.values
+        bank1_eiv_columns_expected = ['eI/V_Ni111_1',
+                                      'eI/V_Ni200_1',
+                                      'eI/V_Ni220_1',
+                                      'eI/V_Ni311_1',
+                                      'eI/V_Ni222_1',
+                                      'eI/V_Ni400_1']
+        self.assertTrue((bank1_eiv_columns_values[0:6] == bank1_eiv_columns_expected).all())
+
+        # bank2
+        bank2_iv_columns_values = o_vdrive.bank2.iv.columns.values
+        bank2_iv_columns_expected = ['I/V_Ni111_2',
+                                     'I/V_Ni200_2',
+                                     'I/V_Ni220_2',
+                                     'I/V_Ni311_2',
+                                     'I/V_Ni222_2',
+                                     'I/V_Ni400_2']
+        self.assertTrue((bank2_iv_columns_values[0:6] == bank2_iv_columns_expected).all())
+
+        bank2_eiv_columns_values = o_vdrive.bank2.eiv.columns.values
+        bank2_eiv_columns_expected = ['eI/V_Ni111_2',
+                                      'eI/V_Ni200_2',
+                                      'eI/V_Ni220_2',
+                                      'eI/V_Ni311_2',
+                                      'eI/V_Ni222_2',
+                                      'eI/V_Ni400_2']
+        self.assertTrue((bank2_eiv_columns_values[0:6] == bank2_eiv_columns_expected).all())
 
     def test_bank1_axis_initialization(self):
         """assert bank1 hrot, omega, psi and phi are correctly created"""
