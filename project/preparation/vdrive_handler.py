@@ -361,7 +361,19 @@ class VDriveHandler(object):
 
     def calculate_mean_table2(self):
         """mean of table 2 columns"""
-        pass
 
+        bank1_table2 = self.bank1.table2
+        bank2_table2 = self.bank2.table2
 
+        mean_table = []
+
+        [_, nbr_column] = np.shape(bank1_table2)
+        for _col in np.arange(nbr_column):
+            _bank1_col = list(bank1_table2[:, _col])
+            _bank2_col = list(bank2_table2[:-12, _col])
+
+            _bank_col = np.array(_bank1_col + _bank2_col)
+            mean_table.append(np.nanmean(_bank_col))
+
+        self.mean_table = mean_table
 

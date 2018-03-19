@@ -381,9 +381,9 @@ class TestVDriveHandler(unittest.TestCase):
             self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)
 
         # mean values
-        _mean_iv_ratio_omega_90_calculated = o_vdrive.bank2.mean_iv_ratio_omega_90[0:6]
+        _mean_iv_ratio_omega_90_calculated = o_vdrive.bank2.mean_iv_ratio_omega_90[0:7]
         _mean_iv_ratio_omega_90_expected = [0.85891518, 0.857602759, 0.885132385, 0.891429027,
-                                            0.928733701, 0.908020406]
+                                            0.928733701, 0.908020406, 0.919771881]
         _returned_vs_expected = zip(_mean_iv_ratio_omega_90_calculated, _mean_iv_ratio_omega_90_expected)
         for _returned, _expected in _returned_vs_expected:
             self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)
@@ -429,3 +429,25 @@ class TestVDriveHandler(unittest.TestCase):
         _returned_vs_expected = zip(bottom_part_col_0_calculated, bottom_part_col_0_expected)
         for _returned, _expected in _returned_vs_expected:
             self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)
+
+    def test_mean_table(self):
+        """assert mean table2 is correct"""
+        vdrive_file = self.filename
+        o_vdrive = VDriveHandler()
+        o_vdrive.load_vdrive(filename=vdrive_file)
+        o_vdrive.initialize_bank_xaxis()
+        o_vdrive.keep_columns_of_interest()
+        o_vdrive.isolating_banks()
+        o_vdrive.calculate_mean_omega_45()
+        o_vdrive.calculate_sin_omega()
+        o_vdrive.calculate_bank2_iv_ratio_omega_90()
+        o_vdrive.calculata_table2()
+        o_vdrive.calculate_mean_table2()
+
+        mean_calculated = o_vdrive.mean_table
+        mean_expected = [2.133214161, 1.168463923, 0.836050093, 0.969270446,
+                         0.279793507, 0.143081008, 0.413152847, 0.373292951]
+        _calculated_vs_expected = zip(mean_calculated, mean_expected)
+        # for _returned, _expected in _calculated_vs_expected:
+        #     self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)
+
