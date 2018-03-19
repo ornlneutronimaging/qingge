@@ -238,10 +238,11 @@ class TestVDriveHandler(unittest.TestCase):
         self.assertTrue((sin_omega_bank2_expected == sin_omega_bank2_returned).all())
 
     def test_mean_omega_45(self):
-        """assert mean omega 45 works correctly"""
+        """assert mean omega 45 works correctly for iv and eiv (bank1)"""
         o_vdrive = VDriveHandler()
         o_vdrive.calculating_mean_omega_45()
-        self.assertEqual(o_vdrive.bank1.data_mean_omega_45, [])
+        self.assertEqual(o_vdrive.bank1.iv_mean_omega_45, [])
+        self.assertEqual(o_vdrive.bank1.eiv_mean_omega_45, [])
 
         vdrive_file = self.filename
         o_vdrive = VDriveHandler()
@@ -250,11 +251,23 @@ class TestVDriveHandler(unittest.TestCase):
         o_vdrive.isolating_banks()
         o_vdrive.calculating_mean_omega_45()
 
-        mean_omega_45_returned = o_vdrive.bank1.data_mean_omega_45
-        mean_omega_45_expected = [2.451589167, 0.054312417, 2.399450833,
-                                  0.053232583, 0.841268417, 0.01754925]
+        # iv
+        mean_iv_omega_45_returned = o_vdrive.bank1.iv_mean_omega_45
+        mean_iv_omega_45_expected = [2.451589167, 2.399450833,
+                                     0.841268417, 1.271379167,
+                                     0.320264833, 0.288333667]
 
-        _returned_expected = zip(mean_omega_45_expected[0:6], mean_omega_45_returned)
+        _returned_expected = zip(mean_iv_omega_45_expected[0:6], mean_iv_omega_45_returned)
+        for _returned, _expected in _returned_expected:
+            self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)
+
+        # eiv
+        mean_eiv_omega_45_returned = o_vdrive.bank1.eiv_mean_omega_45
+        mean_eiv_omega_45_expected = [0.054312417, 0.053232583,
+                                      0.01754925, 0.01939325,
+                                      0.007362275, 0.00547845]
+
+        _returned_expected = zip(mean_eiv_omega_45_expected[0:6], mean_eiv_omega_45_returned)
         for _returned, _expected in _returned_expected:
             self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)
 
@@ -262,7 +275,8 @@ class TestVDriveHandler(unittest.TestCase):
         """assert std dev omega 45 works correctly"""
         o_vdrive = VDriveHandler()
         o_vdrive.calculating_stdev_omega_45()
-        self.assertEqual(o_vdrive.bank1.data_stdev_omega_45, [])
+        self.assertEqual(o_vdrive.bank1.iv_stdev_omega_45, [])
+        self.assertEqual(o_vdrive.bank1.eiv_stdev_omega_45, [])
 
         vdrive_file = self.filename
         o_vdrive = VDriveHandler()
@@ -271,11 +285,13 @@ class TestVDriveHandler(unittest.TestCase):
         o_vdrive.isolating_banks()
         o_vdrive.calculating_stdev_omega_45()
 
-        std_omega_45_returned = o_vdrive.bank1.data_stdev_omega_45
-        std_omega_45_expected = [0.26040127, 0.00570957, 0.33226091,
-                                 0.00823368, 0.05788931, 0.00171215]
+        # iv
+        std_iv_omega_45_returned = o_vdrive.bank1.iv_stdev_omega_45
+        std_iv_omega_45_expected = [0.260401269, 0.332260911,
+                                    0.057889314, 0.122683245,
+                                    0.031568719, 0.040697648]
 
-        _returned_expected = zip(std_omega_45_returned[0:6], std_omega_45_expected)
+        _returned_expected = zip(std_iv_omega_45_returned[0:6], std_iv_omega_45_expected)
         for _returned, _expected in _returned_expected:
             self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)
 

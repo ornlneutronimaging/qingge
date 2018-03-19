@@ -224,14 +224,22 @@ class VDriveHandler(object):
         self.bank1.eiv_mean_omega_45 = np.mean(bank1_eiv_omega_45, 0)
 
     def calculating_stdev_omega_45(self):
-        """calculating std dev of all data sets for omega 45"""
-        bank1_data = self.bank1.data
-        if len(bank1_data) == 0:
-            self.bank1.data_stdev_omega_45 = []
+        """calculating std dev of all iv and eiv data for omega 45"""
+        bank1_iv= self.bank1.iv
+        if len(bank1_iv) == 0:
+            self.bank1.iv_stdev_omega_45 = []
             return
 
-        bank1_omega_45 = np.array(bank1_data)[0:12, :]
-        self.bank1.data_stdev_omega_45 = np.std(bank1_omega_45, 0, ddof=1)
+        bank1_iv_omega_45 = np.array(bank1_iv)[0:12, :]
+        self.bank1.iv_stdev_omega_45 = np.std(bank1_iv_omega_45, 0, ddof=1)
+
+        # bank1_eiv = self.bank1.eiv
+        # if len(bank1_eiv) == 0:
+        #     self.bank1.eiv_stdev_omega_45 = []
+        #     return
+        #
+        # bank1_eiv_omega_45 = np.array(bank1_eiv)[0:12, :]
+        # self.bank1.eiv_stdev_omega_45 = np.std(bank1_eiv_omega_45, 0, ddof=1)
 
     def keep_columns_of_interest(self):
         """We want to only keep the I/V and eI/V columns"""
