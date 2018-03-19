@@ -46,6 +46,7 @@ class VDriveHandler(object):
         self.data = Data()
         self.bank1 = Bank()
         self.bank2 = Bank()
+        self.mean_table = np.NaN
 
     def run(self):
         # full process
@@ -56,6 +57,7 @@ class VDriveHandler(object):
         self.calculate_sin_omega()
         self.calculate_bank2_iv_ratio_omega_90()
         self.calculata_table2()
+        self.calculate_mean_table2()
 
     def calculate_sin_omega(self):
         """sin(Pi()/180 * omega
@@ -288,7 +290,7 @@ class VDriveHandler(object):
         bank1_iv = np.array(self.bank1.iv)
         bank2_iv = np.array(self.bank2.iv)
 
-        [nbr_row, nbr_column] = np.shape(bank1_iv)
+        [nbr_row, _] = np.shape(bank1_iv)
 
         _iv_ratio_omega_90 = []
         for _row in np.arange(nbr_row - 12, nbr_row-6):
@@ -357,7 +359,9 @@ class VDriveHandler(object):
 
         self.bank2.table2 = bank2_table2
 
-
+    def calculate_mean_table2(self):
+        """mean of table 2 columns"""
+        pass
 
 
 

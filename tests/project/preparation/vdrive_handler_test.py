@@ -305,6 +305,7 @@ class TestVDriveHandler(unittest.TestCase):
         o_vdrive.isolating_banks()
         o_vdrive.calculate_mean_omega_45()
         o_vdrive.calculate_sin_omega()
+        o_vdrive.calculate_bank2_iv_ratio_omega_90()
         o_vdrive.calculata_table2()
 
         # bank1
