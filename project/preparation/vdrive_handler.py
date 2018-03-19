@@ -36,6 +36,7 @@ class Bank(object):
     sin_omega = []
 
     table2 = [] # step before producing output table  iv table * sin(omega)
+    iv_ratio_omega_90 = [] # uses when calculating bank2 table2
 
 
 class VDriveHandler(object):
@@ -279,8 +280,27 @@ class VDriveHandler(object):
                                      sep='\t',
                                      index_col=0)
 
-    def calculate_bank2_iv_ratio(self):
+    def calculate_bank2_iv_ratio_omega_90(self):
         """this ratio will be used in the iv_sin calculation"""
+
+        # banks iv
+        bank1_iv = np.array(self.bank1.iv)
+        bank2_iv = np.array(self.bank2.iv)
+
+        [nbr_row, nbr_column] = np.shape(bank1_iv)
+
+        _iv_ratio_omega_90 = []
+        for _row in np.arange(nbr_row - 12, nbr_row-6):
+            _iv_n = bank2_iv[_row, :]
+            _iv_d = bank1_iv[_row+6, :]
+            _iv_ratio_omega_90.append(_iv_n/_iv_d)
+
+        for _row in np.arange(nbr_row-6, nbr_row):
+            _iv_n = bank2_iv[_row, :]
+            _iv_d = bank1_iv[_row-6, :]
+            _iv_ratio_omega_90.append(_iv_n/_iv_d)
+
+        self.bank2.iv_ratio_omega_90 = np.array(_iv_ratio_omega_90)
 
     def calculata_table2(self):
         """calculate   sin(omega) * iv"""

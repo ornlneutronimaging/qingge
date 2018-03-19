@@ -349,6 +349,21 @@ class TestVDriveHandler(unittest.TestCase):
         for _returned, _expected in _returned_expected:
             self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)
 
+    def test_bank2_iv_ratio_omega_90(self):
+        """assert bank2 iv ratio omega 90"""
+        vdrive_file = self.filename
+        o_vdrive = VDriveHandler()
+        o_vdrive.load_vdrive(filename=vdrive_file)
+        o_vdrive.initialize_bank_xaxis()
+        o_vdrive.keep_columns_of_interest()
+        o_vdrive.isolating_banks()
+        o_vdrive.calculate_mean_omega_45()
+        o_vdrive.calculate_sin_omega()
+        o_vdrive.calculate_bank2_iv_ratio_omega_90()
+
+        print(o_vdrive.bank2.iv_ratio_omega_90[:,1])
+
+
     def test_table2_bank2(self):
         """assert sin(omega)*iv works for banks 2"""
         pass
