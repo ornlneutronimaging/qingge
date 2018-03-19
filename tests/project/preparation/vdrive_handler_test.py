@@ -361,32 +361,70 @@ class TestVDriveHandler(unittest.TestCase):
         o_vdrive.calculate_sin_omega()
         o_vdrive.calculate_bank2_iv_ratio_omega_90()
 
-        print(o_vdrive.bank2.iv_ratio_omega_90[:,1])
+        # col 0
+        iv_ratio_omega_90_calculated = o_vdrive.bank2.iv_ratio_omega_90[:,0]
+        iv_ratio_omega_90_expected = [1.033983906, 0.879617289, 0.892355783, 0.715981561,
+                                      0.691115888, 0.652407466, 0.530479435, 0.749767571,
+                                      0.700354435, 1.079204328, 1.05466988, 1.327044616]
+        _returned_vs_expected = zip(iv_ratio_omega_90_calculated, iv_ratio_omega_90_expected)
+        for _returned, _expected in _returned_vs_expected:
+            self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)
 
+        # col 2
+        iv_ratio_omega_90_calculated = o_vdrive.bank2.iv_ratio_omega_90[:,2]
+        iv_ratio_omega_90_expected = [1.124049719, 0.994620789, 0.762225514, 0.963104237,
+                                      0.555244755, 0.579175129, 0.742196268, 0.836293488,
+                                      0.792550412, 1.015357199, 1.17216025, 1.084610855]
+        _returned_vs_expected = zip(iv_ratio_omega_90_calculated, iv_ratio_omega_90_expected)
+        for _returned, _expected in _returned_vs_expected:
+            self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)
+
+        # mean values
+        _mean_iv_ratio_omega_90_calculated = o_vdrive.bank2.mean_iv_ratio_omega_90[0:6]
+        _mean_iv_ratio_omega_90_expected = [0.85891518, 0.857602759, 0.885132385, 0.891429027,
+                                            0.928733701, 0.908020406]
+        _returned_vs_expected = zip(_mean_iv_ratio_omega_90_calculated, _mean_iv_ratio_omega_90_expected)
+        for _returned, _expected in _returned_vs_expected:
+            self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)
 
     def test_table2_bank2(self):
         """assert sin(omega)*iv works for banks 2"""
-        pass
-        # vdrive_file = self.filename
-        # o_vdrive = VDriveHandler()
-        # o_vdrive.load_vdrive(filename=vdrive_file)
-        # o_vdrive.initialize_bank_xaxis()
-        # o_vdrive.keep_columns_of_interest()
-        # o_vdrive.isolating_banks()
-        # o_vdrive.calculate_mean_omega_45()
-        # o_vdrive.calculate_sin_omega()
-        # o_vdrive.iv_sin()
-        #
-        # # bank2
-        # bank2_iv_sin_calculated = o_vdrive.bank2.iv_sin
-        #
-        # # col 0
-        # bank2_iv_sin_expected_col_0 = [1.655954058, 1.589657279, 1.379463645, 1.03711278,
-        #                                1.64395099, 0.898081364, 1.146506992, 0.907738153,
-        #                                0.879945042, 0.885502018, 1.759272643, 1.128543553,
-        #                                1.430182999, 1.410481494, 1.000879266, 1.099377873,
-        #                                1.081834704]
-        # _returned_expected = zip(bank2_iv_sin_calculated[0:17, 0], bank2_iv_sin_expected_col_0)
-        # for _returned, _expected in _returned_expected:
-        #     self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)
+        vdrive_file = self.filename
+        o_vdrive = VDriveHandler()
+        o_vdrive.load_vdrive(filename=vdrive_file)
+        o_vdrive.initialize_bank_xaxis()
+        o_vdrive.keep_columns_of_interest()
+        o_vdrive.isolating_banks()
+        o_vdrive.calculate_mean_omega_45()
+        o_vdrive.calculate_sin_omega()
+        o_vdrive.calculate_bank2_iv_ratio_omega_90()
+        o_vdrive.calculata_table2()
 
+        bank2_table_calculated = o_vdrive.bank2.table2
+
+        # top part of col 0
+        top_part_col_0_calculated = bank2_table_calculated[0:10, 0]
+        top_part_col_0_expected = [1.655954058, 1.589657279, 1.379463645, 1.03711278,
+                                   1.64395099, 0.898081364, 1.146506992, 0.907738153,
+                                   0.879945042, 0.885502018]
+        _returned_vs_expected = zip(top_part_col_0_calculated, top_part_col_0_expected)
+        for _returned, _expected in _returned_vs_expected:
+            self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)
+
+        # top part of col 2
+        top_part_col_2_calculated = bank2_table_calculated[0:10, 2]
+        top_part_col_2_expected = [1.075608189, 0.810566687, 0.741113623, 0.652813589,
+                                   0.553629733, 1.147922011, 0.766310021, 0.537520495,
+                                   0.48164904, 0.627781758]
+        _returned_vs_expected = zip(top_part_col_2_calculated, top_part_col_2_expected)
+        for _returned, _expected in _returned_vs_expected:
+            self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)
+
+        # bottom part of col 0
+        bottom_part_col_0_calculated = bank2_table_calculated[-12:, 0]
+        bottom_part_col_0_expected = [2.478929294, 2.189971774, 3.270427705, 2.801114774,
+                                      1.88676372, 2.323232895, 1.96169545, 2.769796199,
+                                      2.55591012, 2.735695043, 3.342786421, 3.290499535]
+        _returned_vs_expected = zip(bottom_part_col_0_calculated, bottom_part_col_0_expected)
+        for _returned, _expected in _returned_vs_expected:
+            self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)

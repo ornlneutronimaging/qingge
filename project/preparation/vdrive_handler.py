@@ -37,6 +37,7 @@ class Bank(object):
 
     table2 = [] # step before producing output table  iv table * sin(omega)
     iv_ratio_omega_90 = [] # uses when calculating bank2 table2
+    mean_iv_ratio_omega_90 = [] # mean of iv ratio omega 90
 
 
 class VDriveHandler(object):
@@ -53,8 +54,8 @@ class VDriveHandler(object):
         self.isolating_banks()
         self.calculate_mean_omega_45()
         self.calculate_sin_omega()
-        # self.calculate_stdev_omega_45()  # not used for iv
-        self.iv_sin()
+        self.calculate_bank2_iv_ratio_omega_90()
+        self.calculata_table2()
 
     def calculate_sin_omega(self):
         """sin(Pi()/180 * omega
@@ -301,6 +302,7 @@ class VDriveHandler(object):
             _iv_ratio_omega_90.append(_iv_n/_iv_d)
 
         self.bank2.iv_ratio_omega_90 = np.array(_iv_ratio_omega_90)
+        self.bank2.mean_iv_ratio_omega_90 = np.mean(self.bank2.iv_ratio_omega_90, 0)
 
     def calculata_table2(self):
         """calculate   sin(omega) * iv"""
@@ -339,23 +341,22 @@ class VDriveHandler(object):
 
         self.bank1.table2 = bank1_table2
 
-        # # working with bank2
-        # bank2_iv = np.array(self.bank2.iv)
-        # bank2_sin_omega = self.bank2.sin_omega
-        #
-        # [nbr_row, nbr_column] = np.shape(bank1_iv)
-        # bank2_iv_sin = np.empty((nbr_row, nbr_column))
-        # bank2_iv_sin[:] = np.NaN
-        #
-        # for _column in np.arange(nbr_column):
-        #     for _row in np.arange(nbr_row):
-        #         sin_omega = bank2_sin_omega[_row]
-        #         iv = bank2_iv[_row, _column]
-        #         bank2_iv_sin[_row, _column] = sin_omega * iv
-        #         if _column ==0:
-        #             print("bank2_iv_sin[{}: {}".format(_row, sin_omega*iv))
-        #
-        # self.bank2.iv_sin = bank2_iv_sin
+        # working with bank2
+        bank2_sin_omega = self.bank2.sin_omega
+        mean_iv_ratio_omega_90 = self.bank2.mean_iv_ratio_omega_90
+
+        bank2_table2 = np.empty((nbr_row, nbr_column))
+        bank2_table2[:] = np.NaN
+
+        for _column in np.arange(nbr_column):
+            _mean_iv_ratio = mean_iv_ratio_omega_90[_column]
+            for _row in np.arange(nbr_row):
+                _sin_omega = bank2_sin_omega[_row]
+                _iv = bank2_iv[_row, _column]
+                bank2_table2[_row, _column] = (_iv * _sin_omega) / _mean_iv_ratio
+
+        self.bank2.table2 = bank2_table2
+
 
 
 
