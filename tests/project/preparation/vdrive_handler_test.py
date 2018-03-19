@@ -240,7 +240,7 @@ class TestVDriveHandler(unittest.TestCase):
     def test_mean_omega_45(self):
         """assert mean omega 45 works correctly for iv and eiv (bank1)"""
         o_vdrive = VDriveHandler()
-        o_vdrive.calculating_mean_omega_45()
+        o_vdrive.calculate_mean_omega_45()
         self.assertEqual(o_vdrive.bank1.iv_mean_omega_45, [])
         self.assertEqual(o_vdrive.bank1.eiv_mean_omega_45, [])
 
@@ -249,7 +249,7 @@ class TestVDriveHandler(unittest.TestCase):
         o_vdrive.load_vdrive(filename=vdrive_file)
         o_vdrive.keep_columns_of_interest()
         o_vdrive.isolating_banks()
-        o_vdrive.calculating_mean_omega_45()
+        o_vdrive.calculate_mean_omega_45()
 
         # iv
         mean_iv_omega_45_returned = o_vdrive.bank1.iv_mean_omega_45
@@ -274,7 +274,7 @@ class TestVDriveHandler(unittest.TestCase):
     def test_stdev_omega_45(self):
         """assert std dev omega 45 works correctly"""
         o_vdrive = VDriveHandler()
-        o_vdrive.calculating_stdev_omega_45()
+        o_vdrive.calculate_stdev_omega_45()
         self.assertEqual(o_vdrive.bank1.iv_stdev_omega_45, [])
         self.assertEqual(o_vdrive.bank1.eiv_stdev_omega_45, [])
 
@@ -283,7 +283,7 @@ class TestVDriveHandler(unittest.TestCase):
         o_vdrive.load_vdrive(filename=vdrive_file)
         o_vdrive.keep_columns_of_interest()
         o_vdrive.isolating_banks()
-        o_vdrive.calculating_stdev_omega_45()
+        o_vdrive.calculate_stdev_omega_45()
 
         # iv
         std_iv_omega_45_returned = o_vdrive.bank1.iv_stdev_omega_45
@@ -294,4 +294,84 @@ class TestVDriveHandler(unittest.TestCase):
         _returned_expected = zip(std_iv_omega_45_returned[0:6], std_iv_omega_45_expected)
         for _returned, _expected in _returned_expected:
             self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)
+
+    def test_table2_bank1(self):
+        """assert table2 works for banks 1"""
+        vdrive_file = self.filename
+        o_vdrive = VDriveHandler()
+        o_vdrive.load_vdrive(filename=vdrive_file)
+        o_vdrive.initialize_bank_xaxis()
+        o_vdrive.keep_columns_of_interest()
+        o_vdrive.isolating_banks()
+        o_vdrive.calculate_mean_omega_45()
+        o_vdrive.calculate_sin_omega()
+        o_vdrive.calculata_table2()
+
+        # bank1
+        bank1_table2_calculated = o_vdrive.bank1.table2
+        # col 0 - first 17 elements
+        bank1_table2_expected_col_0 = [1.733535324, np.NaN, np.NaN, np.NaN, np.NaN,
+                                       np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN,
+                                       np.NaN, 1.497578584, 1.408625503, 1.563963996,
+                                       1.669969226, 1.784584795]
+        _returned_expected = zip(bank1_table2_calculated[:17, 0], bank1_table2_expected_col_0)
+        for _returned, _expected in _returned_expected:
+            if np.isnan(_returned) and np.isnan(_expected):
+                self.assertTrue(True)
+            else:
+                self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)
+
+        # col 0 - last 17 elements
+        bank1_table2_expected_col_0 = [2.430585, 2.776015, 2.66494, 2.263505, 2.796755,
+                                       2.478, 2.0942, 2.009715, 2.978445, 2.883115,
+                                       1.982715, 2.527035]
+        _returned_expected = zip(bank1_table2_calculated[-12:, 0], bank1_table2_expected_col_0)
+        for _returned, _expected in _returned_expected:
+            self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)
+
+        # col 2
+        bank1_table2_expected_col_2 = [0.594866602, np.NaN, np.NaN, np.NaN, np.NaN,
+                                       np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN,
+                                       np.NaN, 0.505373308, 0.538642618, 0.649678462,
+                                       0.588877515, 0.568471623]
+        _returned_expected = zip(bank1_table2_calculated[:17, 2], bank1_table2_expected_col_2)
+        for _returned, _expected in _returned_expected:
+            if np.isnan(_returned) and np.isnan(_expected):
+                self.assertTrue(True)
+            else:
+                self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)
+
+        # col 3 - last 17 elements
+        bank1_table2_expected_col_3 = [0.897326, 0.9429855, 0.8060015, 1.102025,
+                                       0.802711, 0.9386, 0.8509655, 1.007736,
+                                       0.853531, 0.8713325, 0.79393, 0.8506025]
+        _returned_expected = zip(bank1_table2_calculated[-12:, 3], bank1_table2_expected_col_3)
+        for _returned, _expected in _returned_expected:
+            self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)
+
+    def test_table2_bank2(self):
+        """assert sin(omega)*iv works for banks 2"""
+        pass
+        # vdrive_file = self.filename
+        # o_vdrive = VDriveHandler()
+        # o_vdrive.load_vdrive(filename=vdrive_file)
+        # o_vdrive.initialize_bank_xaxis()
+        # o_vdrive.keep_columns_of_interest()
+        # o_vdrive.isolating_banks()
+        # o_vdrive.calculate_mean_omega_45()
+        # o_vdrive.calculate_sin_omega()
+        # o_vdrive.iv_sin()
+        #
+        # # bank2
+        # bank2_iv_sin_calculated = o_vdrive.bank2.iv_sin
+        #
+        # # col 0
+        # bank2_iv_sin_expected_col_0 = [1.655954058, 1.589657279, 1.379463645, 1.03711278,
+        #                                1.64395099, 0.898081364, 1.146506992, 0.907738153,
+        #                                0.879945042, 0.885502018, 1.759272643, 1.128543553,
+        #                                1.430182999, 1.410481494, 1.000879266, 1.099377873,
+        #                                1.081834704]
+        # _returned_expected = zip(bank2_iv_sin_calculated[0:17, 0], bank2_iv_sin_expected_col_0)
+        # for _returned, _expected in _returned_expected:
+        #     self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)
 

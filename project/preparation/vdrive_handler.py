@@ -35,6 +35,8 @@ class Bank(object):
 
     sin_omega = []
 
+    table2 = [] # step before producing output table  iv table * sin(omega)
+
 
 class VDriveHandler(object):
 
@@ -45,13 +47,18 @@ class VDriveHandler(object):
 
     def run(self):
         # full process
+        self.initialize_bank_xaxis()
         self.keep_columns_of_interest()
         self.isolating_banks()
-        self.calculating_mean_omega_45()
-        self.calculating_stdev_omega_45()
+        self.calculate_mean_omega_45()
+        self.calculate_sin_omega()
+        # self.calculate_stdev_omega_45()  # not used for iv
+        self.iv_sin()
 
     def calculate_sin_omega(self):
-        """sin(Pi()/180 * omega"""
+        """sin(Pi()/180 * omega
+        this requires the initialize_bank_xaxis to be run before
+        """
 
         #bank1
         bank1_omega = self.bank1.omega
@@ -202,7 +209,7 @@ class VDriveHandler(object):
         self.bank1.eiv = _raw_data_eiv.filter(bank1_eiv)
         self.bank2.eiv = _raw_data_eiv.filter(bank2_eiv)
 
-    def calculating_mean_omega_45(self):
+    def calculate_mean_omega_45(self):
         """calculate the mean of all data sets for omega = 45 (only found in bank1)"""
 
         # iv
@@ -223,8 +230,8 @@ class VDriveHandler(object):
         bank1_eiv_omega_45 = np.array(eiv_data)[0:12, :]
         self.bank1.eiv_mean_omega_45 = np.mean(bank1_eiv_omega_45, 0)
 
-    def calculating_stdev_omega_45(self):
-        """calculating std dev of all iv and eiv data for omega 45"""
+    def calculate_stdev_omega_45(self):
+        """calculate std dev of all iv and eiv data for omega 45"""
         bank1_iv= self.bank1.iv
         if len(bank1_iv) == 0:
             self.bank1.iv_stdev_omega_45 = []
@@ -271,3 +278,65 @@ class VDriveHandler(object):
         self.data.raw = pd.read_csv(filename,
                                      sep='\t',
                                      index_col=0)
+
+    def calculate_bank2_iv_ratio(self):
+        """this ratio will be used in the iv_sin calculation"""
+
+    def calculata_table2(self):
+        """calculate   sin(omega) * iv"""
+
+        # banks iv
+        bank1_iv = np.array(self.bank1.iv)
+        bank2_iv = np.array(self.bank2.iv)
+
+        # working with bank1
+        bank1_iv_mean_omega_45 = self.bank1.iv_mean_omega_45
+        bank1_sin_omega = self.bank1.sin_omega
+
+        [nbr_row, nbr_column] = np.shape(bank1_iv)
+        bank1_table2 = np.empty((nbr_row, nbr_column))
+        bank1_table2[:] = np.NaN
+
+        # special case for psi = 0
+        for _column in np.arange(nbr_column):
+            bank1_table2[0, _column] = bank1_sin_omega[0] * bank1_iv_mean_omega_45[_column]
+
+        # then from index = 12 to before last 12, normal case
+        for _column in np.arange(nbr_column):
+            for _row in np.arange(12, nbr_row-12):
+                sin_omega = bank1_sin_omega[_row]
+                iv = bank1_iv[_row, _column]
+                bank1_table2[_row, _column] = sin_omega * iv
+
+        for _column in np.arange(nbr_column):
+            for _row in np.arange(nbr_row-12, nbr_row-6):
+                _array_to_mean = [bank1_iv[_row, _column], bank2_iv[_row+6, _column]]
+                bank1_table2[_row, _column] = np.mean(_array_to_mean)
+
+            for _row in np.arange(nbr_row-6, nbr_row):
+                _array_to_mean = [bank1_iv[_row, _column], bank2_iv[_row-6, _column]]
+                bank1_table2[_row, _column] = np.mean(_array_to_mean)
+
+        self.bank1.table2 = bank1_table2
+
+        # # working with bank2
+        # bank2_iv = np.array(self.bank2.iv)
+        # bank2_sin_omega = self.bank2.sin_omega
+        #
+        # [nbr_row, nbr_column] = np.shape(bank1_iv)
+        # bank2_iv_sin = np.empty((nbr_row, nbr_column))
+        # bank2_iv_sin[:] = np.NaN
+        #
+        # for _column in np.arange(nbr_column):
+        #     for _row in np.arange(nbr_row):
+        #         sin_omega = bank2_sin_omega[_row]
+        #         iv = bank2_iv[_row, _column]
+        #         bank2_iv_sin[_row, _column] = sin_omega * iv
+        #         if _column ==0:
+        #             print("bank2_iv_sin[{}: {}".format(_row, sin_omega*iv))
+        #
+        # self.bank2.iv_sin = bank2_iv_sin
+
+
+
+
