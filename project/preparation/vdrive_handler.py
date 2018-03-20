@@ -56,7 +56,7 @@ class VDriveHandler(object):
         self.calculate_mean_omega_45()
         self.calculate_sin_omega()
         self.calculate_bank2_iv_ratio_omega_90()
-        self.calculata_table2()
+        self.calculate_table2()
         self.calculate_mean_table2()
 
     def calculate_sin_omega(self):
@@ -306,7 +306,7 @@ class VDriveHandler(object):
         self.bank2.iv_ratio_omega_90 = np.array(_iv_ratio_omega_90)
         self.bank2.mean_iv_ratio_omega_90 = np.mean(self.bank2.iv_ratio_omega_90, 0)
 
-    def calculata_table2(self):
+    def calculate_table2(self):
         """calculate   sin(omega) * iv"""
 
         # banks iv

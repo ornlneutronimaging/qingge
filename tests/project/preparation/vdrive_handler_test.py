@@ -441,13 +441,13 @@ class TestVDriveHandler(unittest.TestCase):
         o_vdrive.calculate_mean_omega_45()
         o_vdrive.calculate_sin_omega()
         o_vdrive.calculate_bank2_iv_ratio_omega_90()
-        o_vdrive.calculata_table2()
+        o_vdrive.calculate_table2()
         o_vdrive.calculate_mean_table2()
 
         mean_calculated = o_vdrive.mean_table
         mean_expected = [2.133214161, 1.168463923, 0.836050093, 0.969270446,
-                         0.279793507, 0.143081008, 0.413152847, 0.373292951]
+                         0.279793507, 0.143081008, 0.413152847, 0.370048531]
         _calculated_vs_expected = zip(mean_calculated, mean_expected)
-        # for _returned, _expected in _calculated_vs_expected:
-        #     self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)
+        for _returned, _expected in _calculated_vs_expected:
+            self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)
 
