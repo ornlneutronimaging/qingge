@@ -414,6 +414,9 @@ class VDriveHandler(object):
         if output_table == []:
             raise ValueError("Please load and run full script first!")
 
+        # clean filename
+        filename = os.path.expanduser(filename)
+
         # name of columns
         name_of_columns = self.bank1.iv.columns.values
 
@@ -444,6 +447,4 @@ class VDriveHandler(object):
             _row_data = ",".join(_str_data)
             data.append(_row_meta + "," + _row_data)
 
-        # import pprint
-        # pprint.pprint(data)
         self.make_ascii_(metadata=metadata, data=data, output_file_name=filename)
