@@ -3,6 +3,8 @@ import os
 import numpy as np
 import pprint
 import re
+import shutil
+import pandas as pd
 
 from project.preparation.vdrive_handler import VDriveHandler
 
@@ -13,10 +15,15 @@ class TestVDriveHandler(unittest.TestCase):
         _file_path = os.path.dirname(__file__)
         self.data_path = os.path.abspath(os.path.join(_file_path,
                                                       '../../data/'))
+        self.export_folder = self.data_path + '/temporary_folder/'
         self.filename = os.path.join(self.data_path, 'vdrive_filename.txt')
+        os.mkdir(self.export_folder)
 
         # max diff allowed to compare two arrays
         self.maxDiff = 0.000001
+
+    def tearDown(self):
+        shutil.rmtree(self.export_folder)
 
     def test_vdrive_input_filename_should_not_be_empty(self):
         """assert VDrive filename should not be empty"""
@@ -495,3 +502,33 @@ class TestVDriveHandler(unittest.TestCase):
                 self.assertTrue(True)
             else:
                 self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)
+
+    def test_export_table(self):
+        """assert table correctly exported"""
+        vdrive_file = self.filename
+        o_vdrive = VDriveHandler()
+
+        # raise error if one previous step is missing
+        self.assertRaises(ValueError, o_vdrive.export_table, filename='test_me.txt')
+
+        o_vdrive.load_vdrive(filename=vdrive_file)
+        self.assertRaises(ValueError, o_vdrive.export_table, filename='test_me.txt')
+
+        o_vdrive.run()
+
+        # raise error if filename is missing
+        self.assertRaises(ValueError, o_vdrive.export_table)
+
+        # good to go now
+        output_file = os.path.join(self.export_folder, 'test_output.txt')
+        o_vdrive.export_table(filename=output_file)
+
+        # test loading the file and checking content
+        data_saved = pd.read_csv(output_file)
+        row0_created = data_saved.iloc[1].values[:9]
+        row0_expected = [5, 30, 0.702029178, 1.727360629, 0.604477306, 0.795381176,
+                         0.681151972, 1.70530957, 0.636809108]
+        _created_expected = zip(row0_created, row0_expected)
+        for _created, _expected in _created_expected:
+            self.assertAlmostEqual(_created, _expected, delta=self.maxDiff)
+

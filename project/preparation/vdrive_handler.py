@@ -23,8 +23,8 @@ class Bank(object):
     psi = []
     phi = []
 
-    iv = []
-    eiv = []
+    iv = []  # pandas object
+    eiv = [] # pandas object
 
     iv_mean_omega_45 = [] # mean of all omega=45 for iv
     eiv_mean_omega_45 = [] # mean of all omega=45 for eiv
@@ -394,3 +394,56 @@ class VDriveHandler(object):
             output_table[nbr_row_bank1:-12, _col] = bank2_table2[:-12,_col] / mean_table[_col]
 
         self.output_table = output_table
+
+    def make_ascii_(self, metadata=[], data=[], output_file_name=''):
+        """produce the ascii output file"""
+        with open(output_file_name, 'w') as f:
+            for _meta in metadata:
+                _line = _meta + "\n"
+                f.write(_line)
+            for _data in data:
+                _line = str(_data) + '\n'
+                f.write(_line)
+
+    def export_table(self, filename=''):
+        """Create the ascii file of the output table produced"""
+        if filename == '':
+            raise ValueError("Please provide a filename for the output file!")
+
+        output_table = self.output_table
+        if output_table == []:
+            raise ValueError("Please load and run full script first!")
+
+        # name of columns
+        name_of_columns = self.bank1.iv.columns.values
+
+        # merging x axis
+        bank1_psi = self.bank1.psi
+        bank1_phi = self.bank1.phi
+
+        bank2_psi = self.bank2.psi
+        bank2_phi = self.bank2.phi
+
+        psi_column = np.array(list(bank1_psi) + list(bank2_psi))
+        phi_column = np.array(list(bank1_phi) + list(bank2_phi))
+
+        # Keep only rows with defined values (reject np.NaN rows)
+        rows_to_keep = np.where(np.isfinite(output_table[:, 0]))
+
+        # data to export
+        final_psi_column = psi_column[rows_to_keep]
+        final_phi_column = phi_column[rows_to_keep]
+        final_output_table = np.squeeze(output_table[rows_to_keep, :])
+
+        # create metadata
+        metadata = [",".join(list(["#psi", "phi"]) + list(name_of_columns))]
+        data = []
+        for _row in np.arange(len(final_psi_column)):
+            _row_meta = "{},{}".format(final_psi_column[_row], final_phi_column[_row])
+            _str_data = [str(_value) for _value in final_output_table[_row, :]]
+            _row_data = ",".join(_str_data)
+            data.append(_row_meta + "," + _row_data)
+
+        # import pprint
+        # pprint.pprint(data)
+        self.make_ascii_(metadata=metadata, data=data, output_file_name=filename)
