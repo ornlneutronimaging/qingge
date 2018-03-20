@@ -306,7 +306,7 @@ class TestVDriveHandler(unittest.TestCase):
         o_vdrive.calculate_mean_omega_45()
         o_vdrive.calculate_sin_omega()
         o_vdrive.calculate_bank2_iv_ratio_omega_90()
-        o_vdrive.calculata_table2()
+        o_vdrive.calculate_table2()
 
         # bank1
         bank1_table2_calculated = o_vdrive.bank1.table2
@@ -399,7 +399,7 @@ class TestVDriveHandler(unittest.TestCase):
         o_vdrive.calculate_mean_omega_45()
         o_vdrive.calculate_sin_omega()
         o_vdrive.calculate_bank2_iv_ratio_omega_90()
-        o_vdrive.calculata_table2()
+        o_vdrive.calculate_table2()
 
         bank2_table_calculated = o_vdrive.bank2.table2
 
@@ -451,3 +451,20 @@ class TestVDriveHandler(unittest.TestCase):
         for _returned, _expected in _calculated_vs_expected:
             self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)
 
+    def test_output_table(self):
+        """assert output table is correctly calculated"""
+        vdrive_file = self.filename
+        o_vdrive = VDriveHandler()
+        o_vdrive.load_vdrive(filename=vdrive_file)
+        o_vdrive.initialize_bank_xaxis()
+        o_vdrive.keep_columns_of_interest()
+        o_vdrive.isolating_banks()
+        o_vdrive.calculate_mean_omega_45()
+        o_vdrive.calculate_sin_omega()
+        o_vdrive.calculate_bank2_iv_ratio_omega_90()
+        o_vdrive.calculate_table2()
+        o_vdrive.calculate_mean_table2()
+        o_vdrive.calculate_output_table()
+
+        output_table_calculated = o_vdrive.output_table
+        print(output_table_calculated)

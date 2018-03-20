@@ -16,7 +16,6 @@ class Data(object):
 
     filename = ''
 
-
 class Bank(object):
 
     omega = []
@@ -47,6 +46,7 @@ class VDriveHandler(object):
         self.bank1 = Bank()
         self.bank2 = Bank()
         self.mean_table = np.NaN
+        self.output_table = [] # final table of iv for output
 
     def run(self):
         # full process
@@ -58,6 +58,7 @@ class VDriveHandler(object):
         self.calculate_bank2_iv_ratio_omega_90()
         self.calculate_table2()
         self.calculate_mean_table2()
+        self.calculate_output_table()
 
     def calculate_sin_omega(self):
         """sin(Pi()/180 * omega
@@ -377,3 +378,21 @@ class VDriveHandler(object):
 
         self.mean_table = mean_table
 
+    def calculate_output_table(self):
+        """Final table of data that will be produced"""
+        mean_table = self.mean_table
+        bank1_table2 = self.bank1.table2
+        bank2_table2 = self.bank2.table2
+
+        [nbr_row_bank1, nbr_column] = np.shape(bank1_table2)
+
+        output_table = np.empty((nbr_row_bank1*2, nbr_column))
+        output_table[:] =np.NaN
+
+        # bank1
+        for _col in np.arange(nbr_column):
+            output_table[0:nbr_row_bank1, _col] = bank1_table2[:,_col] / mean_table[_col]
+
+
+
+        self.output_table = output_table
