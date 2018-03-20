@@ -389,10 +389,8 @@ class VDriveHandler(object):
         output_table = np.empty((nbr_row_bank1*2, nbr_column))
         output_table[:] =np.NaN
 
-        # bank1
         for _col in np.arange(nbr_column):
             output_table[0:nbr_row_bank1, _col] = bank1_table2[:,_col] / mean_table[_col]
-
-
+            output_table[nbr_row_bank1:-12, _col] = bank2_table2[:-12,_col] / mean_table[_col]
 
         self.output_table = output_table

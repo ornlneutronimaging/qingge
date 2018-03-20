@@ -467,4 +467,31 @@ class TestVDriveHandler(unittest.TestCase):
         o_vdrive.calculate_output_table()
 
         output_table_calculated = o_vdrive.output_table
-        print(output_table_calculated)
+
+        # col 0 top
+        output_table_col0_top_expected = [0.812640079, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN,
+                                      np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN,
+                                      0.702029178, 0.660330092, 0.733149078, 0.782841806,
+                                      0.836570855, 0.857984191, 1.03785908, 1.071183875,
+                                      1.000483599]
+        _returned_expected = zip(output_table_calculated[0:21, 0],
+                                 output_table_col0_top_expected)
+        for _returned, _expected in _returned_expected:
+            if np.isnan(_returned) and np.isnan(_expected):
+                self.assertTrue(True)
+            else:
+                self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)
+
+        # col 0 bottom
+        output_table_col0_bottom_expected = [1.01526225, 2.307186346, 0.879244772,
+                                             1.163050838, 0.779546467, 1.154482123,
+                                             1.578486721, 1.142830628, 1.402556211,
+                                             np.NaN, np.NaN, np.NaN, np.NaN, np.NaN,
+                                            np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN]
+        _returned_expected = zip(output_table_calculated[-21:, 0],
+                                 output_table_col0_bottom_expected)
+        for _returned, _expected in _returned_expected:
+            if np.isnan(_returned) and np.isnan(_expected):
+                self.assertTrue(True)
+            else:
+                self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)
