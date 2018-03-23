@@ -5,7 +5,7 @@ import numpy as np, os, sys
 tex = 'xqg.tex'
 N_RD = 36
 N_HD = 144
-tolerance = 1.25 # ??????
+tolerance = 1.25 # 90./36/2.
 out = 'list-frompy.dat'
 
 # read texture file
@@ -36,8 +36,6 @@ def euler_angles2matrix(fi1, PHI, fi2, T):
     T[2,1]=-C1*S
     T[2,2]=C
     return
-
-
 
 
 
@@ -79,16 +77,18 @@ def equiv_planes(hkl):
     h, k, l = hkl
     all = [(h, k, l)]
     candidates = [ (-h, k, l), (h, -k, l), (h,k, -l), (-h, -k, l), (-h, k, -l), (h, -k, -l), (-h, -k, -l)]
+    from itertools import permutations
     for c in candidates:
-        if not isDuplicate(c, all):
-            all.append(c)
+        for p in permutations(c):
+            if not isDuplicate(p, all):
+                all.append(p)
         continue
     return all
 
 def isDuplicate(hkl, collection):
     if hkl in collection: return True
-    # h,k,l = hkl; nhkl = -h,-k,-l
-    # if nhkl in collection: return True
+    h,k,l = hkl; nhkl = -h,-k,-l
+    if nhkl in collection: return True
     return False
 
 def normalized_equiv_planes(hkl):
@@ -97,9 +97,11 @@ def normalized_equiv_planes(hkl):
     norma = lambda x: norm(np.array(x))
     return map(norma, hkls)
 
+# print equiv_planes((5,3,1))
+# sys.exit(1)
 
 outstream = open(out, 'wt')
-
+matched_min = np.cos(tolerance*np.pi/180.)
 for ihkl, (hkl, d_spacing) in enumerate(zip(hkls, d_spacing_list)):
     print ihkl
     for iRD in range(N_RD+1):
@@ -107,11 +109,10 @@ for ihkl, (hkl, d_spacing) in enumerate(zip(hkls, d_spacing_list)):
         RD = iRD * np.pi/2. / N_RD  # from 0 to pi/2
         lambda_ = 2.*d_spacing*np.sin( RD )
         alfa = np.arccos(lambda_/2./d_spacing)
-        for iHD in range(N_HD): # ??????
+        for iHD in range(N_HD): 
             beta = iHD * np.pi*2 / N_HD  # from 0 to <2*pi
             sa=np.sin(alfa)            
             v = np.array([sa*np.cos(beta), sa*np.sin(beta), np.cos(alfa)])
-            # ??????????????
             icounter = 0
             
             # equiv_planes() calculates nfamily
@@ -119,8 +120,11 @@ for ihkl, (hkl, d_spacing) in enumerate(zip(hkls, d_spacing_list)):
 
             # print iRD, iHD, hkl_family
             for ipl, hkl1 in enumerate(hkl_family):
+                # hkl1dotv = np.dot(hkl1, v)
                 prodesc = np.dot(np.dot(euler_matrices, hkl1), v)
-                icounter+= np.sum(prodesc >= np.cos(tolerance*np.pi/180.))
+                prodesc = np.abs(prodesc)
+                # prodesc is close to 1 means a match
+                icounter+= np.sum(prodesc >= matched_min)
                 continue
             outstream.write("%6i%8i%8i%8i%8i%14.6f\n"  % (
                 ihkl+1, icounter, iRD+1, iHD+1, 0, lambda_
