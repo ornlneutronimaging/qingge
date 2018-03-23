@@ -1,5 +1,13 @@
 #!/usr/bin/env python
 
+
+"""
+An almost "literal" translation of QingGe's fortran code "BraggEdge.for".
+
+It takes 10minutes to run at heetuu.
+
+"""
+
 import numpy as np, os, sys
 
 tex = 'xqg.tex'
@@ -36,7 +44,6 @@ def euler_angles2matrix(fi1, PHI, fi2, T):
     T[2,1]=-C1*S
     T[2,2]=C
     return
-
 
 
 for i in range(N_grains):
@@ -120,7 +127,6 @@ for ihkl, (hkl, d_spacing) in enumerate(zip(hkls, d_spacing_list)):
 
             # print iRD, iHD, hkl_family
             for ipl, hkl1 in enumerate(hkl_family):
-                # hkl1dotv = np.dot(hkl1, v)
                 prodesc = np.dot(np.dot(euler_matrices, hkl1), v)
                 prodesc = np.abs(prodesc)
                 # prodesc is close to 1 means a match
