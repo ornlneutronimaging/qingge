@@ -46,7 +46,9 @@ for i in range(N_grains):
     fi1, PHI, fi2 = line[:3]
     euler_angles2matrix(fi1, PHI, fi2, euler_matrices[i])
     continue
-    
+#
+euler_matrices = np.transpose(euler_matrices, (0, 2, 1))
+
 _hkls = [111, 200, 220, 311, 222, 400, 331, 420, 422, 511, 333, 440, 531]
 hkls = []
 for hkl in _hkls:
@@ -101,7 +103,7 @@ outstream = open(out, 'wt')
 for ihkl, (hkl, d_spacing) in enumerate(zip(hkls, d_spacing_list)):
     print ihkl
     for iRD in range(N_RD+1):
-        print iRD
+        # print iRD
         RD = iRD * np.pi/2. / N_RD  # from 0 to pi/2
         lambda_ = 2.*d_spacing*np.sin( RD )
         alfa = np.arccos(lambda_/2./d_spacing)
@@ -116,31 +118,12 @@ for ihkl, (hkl, d_spacing) in enumerate(zip(hkls, d_spacing_list)):
             hkl_family = normalized_equiv_planes(hkl) # ??? why not outside iRD and iHD?
 
             # print iRD, iHD, hkl_family
-            for igrain in range(N_grains):
-                inner = 0
-                em = euler_matrices[igrain]
-                for ipl, hkl1 in enumerate(hkl_family):
-                    p = np.dot(hkl1, em)
-                    # print p
-                    prodesc = np.dot(p, v)
-                    # print prodesc
-                    if prodesc >= np.cos(tolerance*np.pi/180.):
-                        # match
-                        if inner >=2:
-                            print iRD, iHD, ihkl, igrain, ipl 
-                            sys.exit(1)
-                        # print p, v
-                        # print prodesc
-                        icounter += 1
-                        inner+=1
-                    if icounter > 10000:
-                        # error
-                        print 'Larger than 10000, increase the size of the matrix'
-                        sys.exit(1)
-                    continue # hkl_family
-                continue # grains
-            outstream.write("%s\t%s\t%s\t%s\t%s\n"  % (
-                ihkl+1, icounter, iRD+1, iHD+1, lambda_
+            for ipl, hkl1 in enumerate(hkl_family):
+                prodesc = np.dot(np.dot(euler_matrices, hkl1), v)
+                icounter+= np.sum(prodesc >= np.cos(tolerance*np.pi/180.))
+                continue
+            outstream.write("%6i%8i%8i%8i%8i%14.6f\n"  % (
+                ihkl+1, icounter, iRD+1, iHD+1, 0, lambda_
             ))
             continue # iHD
         continue #iRD
