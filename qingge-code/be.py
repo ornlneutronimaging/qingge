@@ -6,6 +6,7 @@ An almost "literal" translation of QingGe's fortran code "BraggEdge.for".
 
 It takes 10minutes to run at heetuu.
 
+Calculates Bragg Edge info from texture file
 """
 
 import numpy as np, os, sys
