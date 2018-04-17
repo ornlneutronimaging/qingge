@@ -1,6 +1,7 @@
 import numpy as np
 import os
 import pandas as pd
+from scipy.interpolate import interp1d
 
 
 class VdriveToMtex(object):
@@ -14,6 +15,8 @@ class VdriveToMtex(object):
     a220 = np.zeros((19, 12))
     a311 = np.zeros((19, 12))
     a222 = np.zeros((19, 12))
+
+    a111_interpolated = []
 
     psi = np.arange(0, 91, 5)
     phi = np.arange(0, 331, 30)
@@ -91,3 +94,28 @@ class VdriveToMtex(object):
         self.a220 = a220
         self.a311 = a311
         self.a222 = a222
+
+    def interpolation(self):
+        """this will create an interpolated version of the arrays
+
+        before phi axis: [0, 30, 60, 90 .... 330]
+        after phi axis: [0, 5, 10, 15, 20, 25, 30, 35, 40]
+        """
+        psi = self.psi
+        old_xaxis = self.phi
+        old_xaxis = np.append(old_xaxis, 360) # duplicate of value at 0 degrees for interpolation
+        new_xaxis = np.arange(0, 359, 5)
+
+        a111 = self.a111
+        a111_interpolated = []
+        for _row in a111:
+            _row = np.append(_row, _row[0])
+            f = interp1d(old_xaxis, _row)
+            a111_interpolated.append(f(new_xaxis))
+
+        self.a111_interpolated = np.array(a111_interpolated)
+
+
+
+
+

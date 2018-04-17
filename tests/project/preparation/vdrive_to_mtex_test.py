@@ -20,7 +20,7 @@ class TestVDriveToMtexHandler(unittest.TestCase):
         # os.mkdir(self.export_folder)
 
         # max diff allowed to compare two arrays
-        self.maxDiff = 0.000001
+        self.maxDiff = 0.0001
 
     def tearDown(self):
         # shutil.rmtree(self.export_folder)
@@ -65,8 +65,8 @@ class TestVDriveToMtexHandler(unittest.TestCase):
         returned_psi_column = psi_column[0: 7]
         self.assertTrue((expected_psi_column == returned_psi_column).all())
 
-    def test_axxx_arrays(self):
-        """assert the a111, a200, a220 a311 and a222 are correctly defined"""
+    def test_a111_arrays(self):
+        """assert the a111 is correctly defined"""
         input_file = self.input_filename
         o_handler = VdriveToMtex(vdrive_handler_file=input_file)
         o_handler.load()
@@ -85,5 +85,27 @@ class TestVDriveToMtexHandler(unittest.TestCase):
         for _returned, _expected in zip(a111[1, 0:3], a111_expected[1, 0:3]):
             self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)
 
+    def test_interpolation(self):
+        """assert interpolation of a111 works"""
+        input_file = self.input_filename
+        o_handler = VdriveToMtex(vdrive_handler_file=input_file)
+        o_handler.load()
+        o_handler.sort_raw_data()
+        o_handler.interpolation()
 
+        a111_interpolated = o_handler.a111_interpolated
+        print(np.shape(a111_interpolated))
+        a111_1_1_expected = [0.8429,  0.8194,  0.7959,  0.7725,  0.7490,  0.7255,  0.7020, 0.6951,
+                             0.6881,  0.6812,  0.6742,  0.6673,  0.6603,  0.6725,  0.6846,  0.6967,
+                             0.7089,  0.7210,  0.7331,  0.7414,  0.7497,  0.7580,  0.7663,  0.7746,
+                             0.7828,  0.7918,  0.8008,  0.8097,  0.8187,  0.8276,  0.8366,  0.8401,
+                             0.8437,  0.8473,  0.8508,  0.8544,  0.8580,  0.8880,  0.9179,  0.9479,
+                             0.9779,  1.0079, 1.0379, 1.0434,  1.0490,  1.0545,  1.0601,  1.0656,
+                             1.0712,  1.0594,  1.0476,  1.0358,  1.0241,  1.0123,  1.0005,  1.0030,
+                             1.0056,  1.0082,  1.0107,  1.0133,  1.0159,  1.0113,  1.0067,  1.0022,
+                             0.9976,  0.9930,  0.9885,  0.9642,  0.9399,  0.9157,  0.8914,  0.8671]
+        a111_1_1_returned = a111_interpolated[1, :]
+
+        for _returned, _expected in zip(a111_1_1_returned, a111_1_1_expected):
+            self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)
 
