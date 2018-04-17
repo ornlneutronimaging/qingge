@@ -73,12 +73,17 @@ class TestVDriveToMtexHandler(unittest.TestCase):
         o_handler.sort_raw_data()
 
         a111 = o_handler.a111
-
         # psi and phi == 0
-        a111_expected = np.zeros((12, 19))
-        a111_expected[:, 0] = 0.81264008
+        a111_expected = np.zeros((19, 12))
+        a111_expected[0, :] = 0.81264008
+        a111_expected[1, 0] = 0.842873
+        a111_expected[1, 1] = 0.7020292
+        a111_expected[1, 2] = 0.6603301
 
-        for _returned, _expected in zip(a111[:, 0], a111_expected[:, 0]):
+        for _returned, _expected in zip(a111[0, :], a111_expected[0, :]):
             self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)
+        for _returned, _expected in zip(a111[1, 0:3], a111_expected[1, 0:3]):
+            self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)
+
 
 
