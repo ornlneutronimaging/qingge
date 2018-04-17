@@ -16,15 +16,15 @@ class TestVDriveToMtexHandler(unittest.TestCase):
         self.data_path = os.path.abspath(os.path.join(_file_path,
                                                       '../../data/'))
         self.export_folder = self.data_path + '/temporary_folder/'
+        self.export_filename = "my_VULCAN.rpf"
         self.input_filename = os.path.join(self.data_path, 'my_ducu.txt')
-        # os.mkdir(self.export_folder)
+        os.mkdir(self.export_folder)
 
         # max diff allowed to compare two arrays
         self.maxDiff = 0.0001
 
     def tearDown(self):
-        # shutil.rmtree(self.export_folder)
-        pass
+        shutil.rmtree(self.export_folder)
 
     def test_input_file_mandatory(self):
         """assert error raised if input file missing or does not exist"""
@@ -94,7 +94,6 @@ class TestVDriveToMtexHandler(unittest.TestCase):
         o_handler.interpolation()
 
         a111_interpolated = o_handler.a111_interpolated
-        print(np.shape(a111_interpolated))
         a111_1_1_expected = [0.8429,  0.8194,  0.7959,  0.7725,  0.7490,  0.7255,  0.7020, 0.6951,
                              0.6881,  0.6812,  0.6742,  0.6673,  0.6603,  0.6725,  0.6846,  0.6967,
                              0.7089,  0.7210,  0.7331,  0.7414,  0.7497,  0.7580,  0.7663,  0.7746,
@@ -109,3 +108,35 @@ class TestVDriveToMtexHandler(unittest.TestCase):
         for _returned, _expected in zip(a111_1_1_returned, a111_1_1_expected):
             self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)
 
+    def test_export(self):
+        """assert export works"""
+        input_file = self.input_filename
+        o_handler = VdriveToMtex(vdrive_handler_file=input_file)
+        o_handler.load()
+        o_handler.sort_raw_data()
+        o_handler.interpolation()
+
+        self.assertRaises(ValueError, o_handler.export)
+
+        output_file_name = os.path.join(self.export_folder, self.export_filename)
+        o_handler.export(filename=output_file_name)
+
+        def _read_ascii(filename=''):
+            f = open(filename, 'r')
+            text = []
+            for line in f:
+                text.append(line)
+            f.close()
+            return text
+
+        text_created = _read_ascii(output_file_name)
+        text_expected = ["*Dump of file:XQG",
+                         "*Sample: VULCAN",
+                         "*Corrected, rescaled data * Phi range    0.00 -  360.00 Step    5.00",
+                         "*Pole figure: 111",
+                         "*Khi =  0",
+                         "0.8126400790242715 0.8126400790242715 0.8126400790242715 0.8126400790242715 0.8126400790242715 0.8126400790242715 0.8126400790242715 0.8126400790242715",
+                         "0.8126400790242715 0.8126400790242715 0.8126400790242715 0.8126400790242715 0.8126400790242715 0.8126400790242715 0.8126400790242715 0.8126400790242715"]
+
+        for _returned, _expected in zip(text_created[0:6], text_expected):
+            self.assertTrue(_returned.strip() == _expected)

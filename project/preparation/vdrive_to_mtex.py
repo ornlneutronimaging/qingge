@@ -119,8 +119,44 @@ class VdriveToMtex(object):
         self.a200_interpolated = __interpolation(self.a200)
         self.a220_interpolated = __interpolation(self.a220)
         self.a222_interpolated = __interpolation(self.a222)
-        #
+        self.a311_interpolated = __interpolation(self.a311)
+
+    def export(self, filename=''):
+        if filename == '':
+            raise ValueError("Please provide a file name")
+
+        psi = self.psi
+        data = []
+
+        def _create_data_array(pole_figure, a_interpolated):
+            """create the string array for the given a interpolated"""
+            data.append("*Dump of file:XQG")
+            data.append("*Sample: VULCAN")
+            data.append("*Corrected, rescaled data * Phi range    0.00 -  360.00 Step    5.00")
+            data.append("*Pole figure: {}".format(pole_figure))
+
+            for _index, _psi in enumerate(psi):
+                data.append("*Khi =  {}".format(_psi))
+                _local_data_reshape = np.reshape(a_interpolated[_index, :], (9, 8))
+                for _row in _local_data_reshape:
+                    _str_row = [str(value) for value in _row]
+                    new_entry = "  " + " ".join(_str_row)
+                    data.append(new_entry)
+
+            data.append("")
+
+        _create_data_array("111", self.a111_interpolated)
+        _create_data_array("200", self.a200_interpolated)
+        _create_data_array("220", self.a220_interpolated)
+        _create_data_array("311", self.a311_interpolated)
+        self.data = data
+
+        self.__create_ascii(data=data, filename=filename)
 
 
-
+    def __create_ascii(self, data=[], filename=''):
+        with open(filename, 'w') as f:
+            for _data in data:
+                _line = _data + "\n"
+                f.write(_line)
 
