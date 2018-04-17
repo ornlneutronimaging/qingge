@@ -9,11 +9,11 @@ class VdriveToMtex(object):
     raw_data = []
     raw_data_sorted = []
 
-    a111 = np.zeros((12, 19))
-    a200 = np.zeros((12, 19))
-    a220 = np.zeros((12, 19))
-    a311 = np.zeros((12, 19))
-    a222 = np.zeros((12, 19))
+    a111 = np.zeros((19, 12))
+    a200 = np.zeros((19, 12))
+    a220 = np.zeros((19, 12))
+    a311 = np.zeros((19, 12))
+    a222 = np.zeros((19, 12))
 
     psi = np.arange(0, 91, 5)
     phi = np.arange(0, 331, 30)
@@ -63,7 +63,7 @@ class VdriveToMtex(object):
         i_over_v_flatten_for_a111 = clean_data_sorted[:, 0].flatten()
         a111_flatten[12: ] = i_over_v_flatten_for_a111[1: ]
 
-        a111 = np.reshape(a111_flatten, (12, 19))
+        a111 = np.reshape(a111_flatten, (19, 12))
 
         self.a111 = a111
         self.a200 = a200

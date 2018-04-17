@@ -6,7 +6,6 @@ parser = argparse.ArgumentParser(description='VDrive File Handler')
 parser.add_argument('-i', '--input', help='VDrive file', type=str)
 parser.add_argument('-o', '--output', help='Output file', type=str)
 
-
 def vdrive_handler():
 
     args = parser.parse_args()

@@ -5,11 +5,11 @@ C                                                                               
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 C                      Linear interpolation of the data                          C
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-	program xqg
-      implicit none
-	character(len=160) str
+	program xqg            ! start of program
+      implicit none         ! mean we need to declare all the variables
+	character(len=160) str    ! size of the "str" variable
 	integer i, j, k, ilow, iup
-	real*8 a111(12,19), a200(12,19), a220(12,19), a311(12,19), 
+	real*8 a111(12,19), a200(12,19), a220(12,19), a311(12,19),   ! 8bytes size arrays (12 by 19)
      # a222(12,19),
      #t1,t2,t3,t4,t5,t6, t7, qq, qno, tmp1, tmp2,
      # y1, y2, y3, y4, y5, y6, y7, y8
