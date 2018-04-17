@@ -106,15 +106,20 @@ class VdriveToMtex(object):
         old_xaxis = np.append(old_xaxis, 360) # duplicate of value at 0 degrees for interpolation
         new_xaxis = np.arange(0, 359, 5)
 
-        a111 = self.a111
-        a111_interpolated = []
-        for _row in a111:
-            _row = np.append(_row, _row[0])
-            f = interp1d(old_xaxis, _row)
-            a111_interpolated.append(f(new_xaxis))
+        def __interpolation(a):
+            # copy angle=0 value to end (360 degrees)
+            a_interpolated = []
+            for _row in a:
+                _row = np.append(_row, _row[0])
+                f = interp1d(old_xaxis, _row)
+                a_interpolated.append(f(new_xaxis))
+            return np.array(a_interpolated)
 
-        self.a111_interpolated = np.array(a111_interpolated)
-
+        self.a111_interpolated = __interpolation(self.a111)
+        self.a200_interpolated = __interpolation(self.a200)
+        self.a220_interpolated = __interpolation(self.a220)
+        self.a222_interpolated = __interpolation(self.a222)
+        #
 
 
 
