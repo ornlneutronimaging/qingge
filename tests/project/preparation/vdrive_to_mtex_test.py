@@ -76,9 +76,9 @@ class TestVDriveToMtexHandler(unittest.TestCase):
 
         # psi and phi == 0
         a111_expected = np.zeros((12, 19))
-        a111_expected[:, 0] = 0.81264008
+        a111_expected[0, :] = 0.81264008
 
-        for _returned, _expected in zip(a111[:, 0], a111_expected[:, 0]):
+        for _returned, _expected in zip(a111[0, :], a111_expected[0, :]):
             self.assertAlmostEqual(_returned, _expected, delta=self.maxDiff)
 
 
