@@ -51,19 +51,40 @@ class VdriveToMtex(object):
         a222 = self.a222
 
         a111_flatten = a111.flatten()
+        a200_flatten = a200.flatten()
+        a220_flatten = a220.flatten()
+        a311_flatten = a311.flatten()
+        a222_flatten = a222.flatten()
 
         # special case for psi and phi = 0
         a111_flatten[0:12] = clean_data_sorted[0, 0]
-        # a200[:, 0] = clean_data_sorted[0, 1]
-        # a220[:, 0] = clean_data_sorted[0, 2]
-        # a311[:, 0] = clean_data_sorted[0, 3]
-        # a222[:, 0] = clean_data_sorted[0, 4]
+        a200_flatten[0:12] = clean_data_sorted[0, 1]
+        a220_flatten[0:12] = clean_data_sorted[0, 2]
+        a311_flatten[0:12] = clean_data_sorted[0, 3]
+        a222_flatten[0:12] = clean_data_sorted[0, 4]
 
         # all over psi and phi
         i_over_v_flatten_for_a111 = clean_data_sorted[:, 0].flatten()
         a111_flatten[12: ] = i_over_v_flatten_for_a111[1: ]
 
+        i_over_v_flatten_for_a200 = clean_data_sorted[:, 1].flatten()
+        a200_flatten[12: ] = i_over_v_flatten_for_a200[1: ]
+
+        i_over_v_flatten_for_a220 = clean_data_sorted[:, 2].flatten()
+        a220_flatten[12: ] = i_over_v_flatten_for_a220[1: ]
+
+        i_over_v_flatten_for_a311 = clean_data_sorted[:, 3].flatten()
+        a311_flatten[12: ] = i_over_v_flatten_for_a311[1: ]
+
+        i_over_v_flatten_for_a222 = clean_data_sorted[:, 4].flatten()
+        a222_flatten[12: ] = i_over_v_flatten_for_a222[1: ]
+
+        # reshaping the arrays
         a111 = np.reshape(a111_flatten, (19, 12))
+        a200 = np.reshape(a200_flatten, (19, 12))
+        a220 = np.reshape(a220_flatten, (19, 12))
+        a311 = np.reshape(a311_flatten, (19, 12))
+        a222 = np.reshape(a222_flatten, (19, 12))
 
         self.a111 = a111
         self.a200 = a200
