@@ -6,7 +6,7 @@ import re
 import shutil
 import pandas as pd
 
-from project.preparation.vdrive_to_mtex import VdriveToMtex
+from project.preparation.vdrive_to_mtex import VDriveToMtex
 
 
 class TestVDriveToMtexHandler(unittest.TestCase):
@@ -29,15 +29,15 @@ class TestVDriveToMtexHandler(unittest.TestCase):
     def test_input_file_mandatory(self):
         """assert error raised if input file missing or does not exist"""
         # no input file
-        self.assertRaises(ValueError, VdriveToMtex)
+        self.assertRaises(ValueError, VDriveToMtex)
         # file does not exist
         input_file = "i_do_not_exist"
-        self.assertRaises(ValueError, VdriveToMtex, input_file)
+        self.assertRaises(ValueError, VDriveToMtex, input_file)
 
     def test_loading_data(self):
         """assert data are correctly loaded, and just as they are, raw"""
         input_file = self.input_filename
-        o_handler = VdriveToMtex(vdrive_handler_file=input_file)
+        o_handler = VDriveToMtex(vdrive_handler_file=input_file)
         o_handler.load()
 
         raw_data = o_handler.raw_data
@@ -49,7 +49,7 @@ class TestVDriveToMtexHandler(unittest.TestCase):
     def test_sorting_data(self):
         """assert the data are sorted using ascending psi and phi"""
         input_file = self.input_filename
-        o_handler = VdriveToMtex(vdrive_handler_file=input_file)
+        o_handler = VDriveToMtex(vdrive_handler_file=input_file)
         o_handler.load()
         o_handler.sort_raw_data()
 
@@ -68,7 +68,7 @@ class TestVDriveToMtexHandler(unittest.TestCase):
     def test_a111_arrays(self):
         """assert the a111 is correctly defined"""
         input_file = self.input_filename
-        o_handler = VdriveToMtex(vdrive_handler_file=input_file)
+        o_handler = VDriveToMtex(vdrive_handler_file=input_file)
         o_handler.load()
         o_handler.sort_raw_data()
 
@@ -88,7 +88,7 @@ class TestVDriveToMtexHandler(unittest.TestCase):
     def test_interpolation(self):
         """assert interpolation of a111 works"""
         input_file = self.input_filename
-        o_handler = VdriveToMtex(vdrive_handler_file=input_file)
+        o_handler = VDriveToMtex(vdrive_handler_file=input_file)
         o_handler.load()
         o_handler.sort_raw_data()
         o_handler.interpolation()
@@ -111,7 +111,7 @@ class TestVDriveToMtexHandler(unittest.TestCase):
     def test_export(self):
         """assert export works"""
         input_file = self.input_filename
-        o_handler = VdriveToMtex(vdrive_handler_file=input_file)
+        o_handler = VDriveToMtex(vdrive_handler_file=input_file)
         o_handler.load()
         o_handler.sort_raw_data()
         o_handler.interpolation()

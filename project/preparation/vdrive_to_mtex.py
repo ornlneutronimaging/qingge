@@ -4,7 +4,7 @@ import pandas as pd
 from scipy.interpolate import interp1d
 
 
-class VdriveToMtex(object):
+class VDriveToMtex(object):
 
     vdrive_handler_file = ''  # name of input file (produced by vdrive_handler.py
     raw_data = []
@@ -29,6 +29,11 @@ class VdriveToMtex(object):
             raise ValueError("File does not exist ({})".format(vdrive_handler_file))
 
         self.vdrive_handler_file = vdrive_handler_file
+
+    def run(self):
+        self.load()
+        self.sort_raw_data()
+        self.interpolation()
 
     def load(self):
         vdrive_handler_file = self.vdrive_handler_file
@@ -152,7 +157,6 @@ class VdriveToMtex(object):
         self.data = data
 
         self.__create_ascii(data=data, filename=filename)
-
 
     def __create_ascii(self, data=[], filename=''):
         with open(filename, 'w') as f:
