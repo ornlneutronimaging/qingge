@@ -1,0 +1,49 @@
+%% Import Script for PoleFigure Data
+
+/usr/local/mtex-3.5.0
+ startup_mtex
+
+%plotpdf(odf,[Miller(1,1,1),Miller(2,0,0),Miller(2,2,0),Miller(3,1,1)],'contourf')
+
+%plotipdf(odf,[xvector,yvector,zvector],'antipodal','contourf')
+
+% to output ASCII format text of ODF
+%fname=fullfile(mtexDataPath,'ODF', 'odf.txt')
+%export(model_odf,fname,'Bunge')
+
+
+%Random texture:
+%SS=symmetry('triclinic')
+%CS=symmetry('cubic')
+%odf=uniformODF(CS,SS)
+
+% Cube texture component
+% ori=orientation ('Miller', [1,0,0],[0,1,0],CS,SS)
+% odf=unimodalODF(ori,'halfwidth', 15*degree)
+% textureindex(odf)
+
+% plot(odf,'phi2', 'sections',2) ! plot 0 and 45 sections
+
+%  Total number of grains needs be assigned in the script
+%export_VPSC1(odf, 'xqg.tex')
+
+%
+%odf=loadODF_VPSC('xqg.tex',496)
+
+
+rotate ODF or PF
+rot=rotation('Euler', 90*degree, 20*degree, 10*degree)
+odfr=rotate(odf,rot)
+
+calculate the ODF for strong texture:
+we can use
+odf=calcODF(pf,'resolution', 5*degree,'zero_range')
+
+calculate the error between calculted PF and the measured PF:
+calcError(pf,odf,'RP',1) 
+% RP value of Matthies
+calcError(pf,odf,'L1',1)
+% mean absolute difference abs(d1-d2)
+calcError(pf,odf,'L2',1)
+% mean squared difference (d1-d2)^2 
+plotDiff(pf1,pf2) or plotDiff(pf,odf)
