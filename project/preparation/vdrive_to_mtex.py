@@ -21,14 +21,14 @@ class VDriveToMtex(object):
     psi = np.arange(0, 91, 5)
     phi = np.arange(0, 331, 30)
 
-    def __init__(self, vdrive_handler_file=''):
-        if vdrive_handler_file == '':
+    def __init__(self, filename=''):
+        if filename == '':
             raise ValueError("Please provide an input file (output of vdrive_handler.py")
 
-        if not os.path.exists(vdrive_handler_file):
-            raise ValueError("File does not exist ({})".format(vdrive_handler_file))
+        if not os.path.exists(filename):
+            raise ValueError("File does not exist ({})".format(filename))
 
-        self.vdrive_handler_file = vdrive_handler_file
+        self.vdrive_handler_file = filename
 
     def run(self):
         self.load()
