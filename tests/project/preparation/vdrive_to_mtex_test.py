@@ -134,9 +134,9 @@ class TestVDriveToMtexHandler(unittest.TestCase):
                          "*Sample: VULCAN",
                          "*Corrected, rescaled data * Phi range    0.00 -  360.00 Step    5.00",
                          "*Pole figure: 111",
-                         "*Khi =  0",
-                         "0.8126400790242715 0.8126400790242715 0.8126400790242715 0.8126400790242715 0.8126400790242715 0.8126400790242715 0.8126400790242715 0.8126400790242715",
-                         "0.8126400790242715 0.8126400790242715 0.8126400790242715 0.8126400790242715 0.8126400790242715 0.8126400790242715 0.8126400790242715 0.8126400790242715"]
+                         "*Khi =   0.00",
+                         "0.8126  0.8126  0.8126  0.8126  0.8126  0.8126  0.8126  0.8126",
+                         "0.8126  0.8126  0.8126  0.8126  0.8126  0.8126  0.8126  0.8126"]
 
-        for _returned, _expected in zip(text_created[0:6], text_expected):
+        for _returned, _expected in zip(text_created[0:7], text_expected):
             self.assertTrue(_returned.strip() == _expected)
