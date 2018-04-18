@@ -27,20 +27,17 @@ class TestVDriveHandler(unittest.TestCase):
 
     def test_vdrive_input_filename_should_not_be_empty(self):
         """assert VDrive filename should not be empty"""
-        o_vdrive = VDriveHandler()
-        self.assertRaises(ValueError, o_vdrive.load_vdrive)
+        self.assertRaises(ValueError, VDriveHandler)
 
     def test_vdrive_input_filename_should_exists(self):
         """assert error is raised when VDrive filename does not exists"""
         vdrive_file = 'do_not_exist.txt'
-        o_vdrive = VDriveHandler()
-        self.assertRaises(ValueError, o_vdrive.load_vdrive, vdrive_file)
+        self.assertRaises(ValueError, VDriveHandler, vdrive_file)
 
     def test_vdrive_correctly_loaded(self):
         """assert raw VDrive file is correctly loaded"""
         filename = self.filename
-        o_vdrive = VDriveHandler()
-        o_vdrive.load_vdrive(filename=filename)
+        o_vdrive = VDriveHandler(filename=filename)
         filename_saved = o_vdrive.data.filename
         self.assertEqual(filename_saved, filename)
 
@@ -52,8 +49,7 @@ class TestVDriveHandler(unittest.TestCase):
     def test_keep_columns_of_interest(self):
         """assert vdrive data keeps only the columns of interest (I/V and eI/V)"""
         vdrive_file = self.filename
-        o_vdrive = VDriveHandler()
-        o_vdrive.load_vdrive(filename=vdrive_file)
+        o_vdrive = VDriveHandler(filename=vdrive_file)
         o_vdrive.keep_columns_of_interest()
 
         pd_vdrive_data_iv = o_vdrive.data.raw_iv
@@ -83,8 +79,7 @@ class TestVDriveHandler(unittest.TestCase):
     def test_isolating_banks(self):
         """assert bank1 and bank2 data are correctly isolated"""
         vdrive_file = self.filename
-        o_vdrive = VDriveHandler()
-        o_vdrive.load_vdrive(filename=vdrive_file)
+        o_vdrive = VDriveHandler(filename=vdrive_file)
         o_vdrive.keep_columns_of_interest()
         o_vdrive.isolating_banks()
 
@@ -128,7 +123,8 @@ class TestVDriveHandler(unittest.TestCase):
 
     def test_bank1_axis_initialization(self):
         """assert bank1 hrot, omega, psi and phi are correctly created"""
-        o_vdrive = VDriveHandler()
+        vdrive_file = self.filename
+        o_vdrive = VDriveHandler(filename=vdrive_file)
         o_vdrive.initialize_bank1_xaxis()
         index_tested = [0, 5, 12, 19, 24, 36, 49, 67, 79, 89, 101, 111]
 
@@ -154,7 +150,8 @@ class TestVDriveHandler(unittest.TestCase):
 
     def test_bank2_axis_initialization(self):
         """assert bank2 omega, hrot, psi and phi are correctly created"""
-        o_vdrive = VDriveHandler()
+        vdrive_file = self.filename
+        o_vdrive = VDriveHandler(filename=vdrive_file)
         o_vdrive.initialize_bank2_xaxis()
         index_tested = [0, 5, 12, 19, 24, 36, 49, 67, 79, 89, 101, 111]
 
@@ -180,7 +177,8 @@ class TestVDriveHandler(unittest.TestCase):
 
     def test_bank_axis_initialization(self):
         """assert bank1 and bank2 axis are correctly created"""
-        o_vdrive = VDriveHandler()
+        vdrive_file = self.filename
+        o_vdrive = VDriveHandler(filename=vdrive_file)
         o_vdrive.initialize_bank_xaxis()
 
         # bank1
@@ -228,7 +226,8 @@ class TestVDriveHandler(unittest.TestCase):
 
     def test_sin_omega(self):
         """assert sin omega is working"""
-        o_vdrive = VDriveHandler()
+        vdrive_file = self.filename
+        o_vdrive = VDriveHandler(filename=vdrive_file)
         o_vdrive.initialize_bank_xaxis()
         o_vdrive.calculate_sin_omega()
 
@@ -246,14 +245,15 @@ class TestVDriveHandler(unittest.TestCase):
 
     def test_mean_omega_45(self):
         """assert mean omega 45 works correctly for iv and eiv (bank1)"""
-        o_vdrive = VDriveHandler()
+        vdrive_file = self.filename
+        o_vdrive = VDriveHandler(filename=vdrive_file)
         o_vdrive.calculate_mean_omega_45()
         self.assertEqual(o_vdrive.bank1.iv_mean_omega_45, [])
         self.assertEqual(o_vdrive.bank1.eiv_mean_omega_45, [])
 
         vdrive_file = self.filename
-        o_vdrive = VDriveHandler()
-        o_vdrive.load_vdrive(filename=vdrive_file)
+        vdrive_file = self.filename
+        o_vdrive = VDriveHandler(filename=vdrive_file)
         o_vdrive.keep_columns_of_interest()
         o_vdrive.isolating_banks()
         o_vdrive.calculate_mean_omega_45()
@@ -280,14 +280,14 @@ class TestVDriveHandler(unittest.TestCase):
 
     def test_stdev_omega_45(self):
         """assert std dev omega 45 works correctly"""
-        o_vdrive = VDriveHandler()
+        vdrive_file = self.filename
+        o_vdrive = VDriveHandler(filename=vdrive_file)
         o_vdrive.calculate_stdev_omega_45()
         self.assertEqual(o_vdrive.bank1.iv_stdev_omega_45, [])
         self.assertEqual(o_vdrive.bank1.eiv_stdev_omega_45, [])
 
         vdrive_file = self.filename
-        o_vdrive = VDriveHandler()
-        o_vdrive.load_vdrive(filename=vdrive_file)
+        o_vdrive = VDriveHandler(filename=vdrive_file)
         o_vdrive.keep_columns_of_interest()
         o_vdrive.isolating_banks()
         o_vdrive.calculate_stdev_omega_45()
@@ -305,8 +305,7 @@ class TestVDriveHandler(unittest.TestCase):
     def test_table2_bank1(self):
         """assert table2 works for banks 1"""
         vdrive_file = self.filename
-        o_vdrive = VDriveHandler()
-        o_vdrive.load_vdrive(filename=vdrive_file)
+        o_vdrive = VDriveHandler(filename=vdrive_file)
         o_vdrive.initialize_bank_xaxis()
         o_vdrive.keep_columns_of_interest()
         o_vdrive.isolating_banks()
@@ -360,8 +359,7 @@ class TestVDriveHandler(unittest.TestCase):
     def test_bank2_iv_ratio_omega_90(self):
         """assert bank2 iv ratio omega 90"""
         vdrive_file = self.filename
-        o_vdrive = VDriveHandler()
-        o_vdrive.load_vdrive(filename=vdrive_file)
+        o_vdrive = VDriveHandler(filename=vdrive_file)
         o_vdrive.initialize_bank_xaxis()
         o_vdrive.keep_columns_of_interest()
         o_vdrive.isolating_banks()
@@ -398,8 +396,7 @@ class TestVDriveHandler(unittest.TestCase):
     def test_table2_bank2(self):
         """assert sin(omega)*iv works for banks 2"""
         vdrive_file = self.filename
-        o_vdrive = VDriveHandler()
-        o_vdrive.load_vdrive(filename=vdrive_file)
+        o_vdrive = VDriveHandler(filename=vdrive_file)
         o_vdrive.initialize_bank_xaxis()
         o_vdrive.keep_columns_of_interest()
         o_vdrive.isolating_banks()
@@ -440,8 +437,7 @@ class TestVDriveHandler(unittest.TestCase):
     def test_mean_table(self):
         """assert mean table2 is correct"""
         vdrive_file = self.filename
-        o_vdrive = VDriveHandler()
-        o_vdrive.load_vdrive(filename=vdrive_file)
+        o_vdrive = VDriveHandler(filename=vdrive_file)
         o_vdrive.initialize_bank_xaxis()
         o_vdrive.keep_columns_of_interest()
         o_vdrive.isolating_banks()
@@ -461,8 +457,7 @@ class TestVDriveHandler(unittest.TestCase):
     def test_output_table(self):
         """assert output table is correctly calculated"""
         vdrive_file = self.filename
-        o_vdrive = VDriveHandler()
-        o_vdrive.load_vdrive(filename=vdrive_file)
+        o_vdrive = VDriveHandler(filename=vdrive_file)
         o_vdrive.initialize_bank_xaxis()
         o_vdrive.keep_columns_of_interest()
         o_vdrive.isolating_banks()
@@ -506,22 +501,19 @@ class TestVDriveHandler(unittest.TestCase):
     def test_export_table(self):
         """assert table correctly exported"""
         vdrive_file = self.filename
-        o_vdrive = VDriveHandler()
+        o_vdrive = VDriveHandler(filename=vdrive_file)
 
         # raise error if one previous step is missing
-        self.assertRaises(ValueError, o_vdrive.export_table, filename='test_me.txt')
-
-        o_vdrive.load_vdrive(filename=vdrive_file)
-        self.assertRaises(ValueError, o_vdrive.export_table, filename='test_me.txt')
+        self.assertRaises(ValueError, o_vdrive.export, filename='test_me.txt')
 
         o_vdrive.run()
 
         # raise error if filename is missing
-        self.assertRaises(ValueError, o_vdrive.export_table)
+        self.assertRaises(ValueError, o_vdrive.export)
 
         # good to go now
         output_file = os.path.join(self.export_folder, 'test_output.txt')
-        o_vdrive.export_table(filename=output_file)
+        o_vdrive.export(filename=output_file)
 
         # test loading the file and checking content
         data_saved = pd.read_csv(output_file)

@@ -41,12 +41,14 @@ class Bank(object):
 
 class VDriveHandler(object):
 
-    def __init__(self):
+    def __init__(self, filename=''):
         self.data = Data()
         self.bank1 = Bank()
         self.bank2 = Bank()
         self.mean_table = np.NaN
         self.output_table = [] # final table of iv for output
+        self.filename = filename
+        self.__load_vdrive()
 
     def run(self):
         # full process
@@ -270,17 +272,17 @@ class VDriveHandler(object):
         self.data.raw_iv = pd_vdrive_raw_data.filter(name_of_iv_columns_to_keep)
         self.data.raw_eiv = pd_vdrive_raw_data.filter(name_of_eiv_columns_to_keep)
 
-    def load_vdrive(self, filename=''):
+    def __load_vdrive(self):
         """load the VDrive file"""
 
-        if filename == '':
+        if self.filename == '':
             raise ValueError("Missing VDrive Filename")
 
-        if not os.path.exists(filename):
-            raise ValueError("File does not exist: {}".format(filename))
+        if not os.path.exists(self.filename):
+            raise ValueError("File does not exist: {}".format(self.filename))
 
-        self.data.filename = filename
-        self.data.raw = pd.read_csv(filename,
+        self.data.filename = self.filename
+        self.data.raw = pd.read_csv(self.filename,
                                      sep='\t',
                                      index_col=0)
 
@@ -405,7 +407,7 @@ class VDriveHandler(object):
                 _line = str(_data) + '\n'
                 f.write(_line)
 
-    def export_table(self, filename=''):
+    def export(self, filename=''):
         """Create the ascii file of the output table produced"""
         if filename == '':
             raise ValueError("Please provide a filename for the output file!")
