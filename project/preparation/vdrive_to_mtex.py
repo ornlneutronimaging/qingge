@@ -141,11 +141,11 @@ class VDriveToMtex(object):
             data.append("*Pole figure: {}".format(pole_figure))
 
             for _index, _psi in enumerate(psi):
-                data.append("*Khi =  {}".format(_psi))
+                data.append("*Khi =   {:.2f}".format(_psi))
                 _local_data_reshape = np.reshape(a_interpolated[_index, :], (9, 8))
                 for _row in _local_data_reshape:
-                    _str_row = [str(value) for value in _row]
-                    new_entry = "  " + " ".join(_str_row)
+                    _str_row = ["{:1.4f}".format(value) for value in _row]
+                    new_entry = "  " + "  ".join(_str_row)
                     data.append(new_entry)
 
             data.append("")
