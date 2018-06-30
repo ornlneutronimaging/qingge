@@ -8,6 +8,8 @@ from "compute_int_samples_v0.py".
 They should be almost exactly the same, except that 
 compute_int_samples may compute more hkls.
 hkls in compute_int_samples_v0 is hand-picked.
+
+./diff-BE-int_samples.py int_samples.dat expected-int_samples.dat
 """
 
 import numpy as np
@@ -26,5 +28,7 @@ def diff(path1, path2):
     return res
 
 if __name__ == '__main__':
-    if diff('int_samples_v0.dat', 'int_samples.dat'):
+    import sys
+    f1, f2 = sys.argv[1:]
+    if diff(f1, f2):
         import sys;  sys.exit(1)

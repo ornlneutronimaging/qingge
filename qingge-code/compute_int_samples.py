@@ -28,7 +28,11 @@ def compute(
         out = 'int_samples.dat',
         max_hkl_index=5,
         ):
-    
+    """
+    It generates tuples of 
+      (hkl_index+1, number_of_good_grains, 
+       polar_angle_index+1, azimuthal_angle_index+1, 0???, wavelength)
+    """
     tolerance = 90./N_RD/2. # 90./36/2.
     # read euler angles from texture file
     texdata = np.loadtxt(tex, skiprows=4)
