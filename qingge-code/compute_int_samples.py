@@ -12,7 +12,7 @@ The original code of QingGe hardcoded
 * input texture file name
 * output filename
 
-XXX need to test:It takes 10minutes?? to run at heetuu.
+It takes 1 minute to run at heetuu.
 
 Calculates Bragg Edge intensities from texture file.
 A postprocessing step is needed to create histogram of computed data.
@@ -54,25 +54,27 @@ def compute(
     #
     outstream = open(out, 'wt')
     matched_min = np.cos(tolerance*np.pi/180.)
+    
+    RDs = np.arange(N_RD+1) * np.pi/2. / N_RD  # from 0 to pi/2
+    betas = np.arange(N_HD) * np.pi*2 / N_HD  # from 0 to <2*pi
+    # equiv_planes() calculates nfamily
+    hkl_families = [normalized_equiv_planes(hkl, structure) for hkl in hkls]
+    
     for ihkl, (hkl, d_spacing) in enumerate(zip(hkls, d_spacing_list)):
         print ihkl
-        for iRD in range(N_RD+1):
+        lambdas = 2.*d_spacing*np.sin( RDs )
+        alfas = np.arccos(lambdas/2./d_spacing)
+        sa_list = np.sin(alfas)
+        hkl_family = hkl_families[ihkl]
+        euler_dot_hkl_family = [np.dot(euler_matrices, hkl1) for hkl1 in hkl_family]
+        for iRD, (lambda_, alfa, sa) in enumerate(zip(lambdas, alfas, sa_list)):
             # print iRD
-            RD = iRD * np.pi/2. / N_RD  # from 0 to pi/2
-            lambda_ = 2.*d_spacing*np.sin( RD )
-            alfa = np.arccos(lambda_/2./d_spacing)
-            for iHD in range(N_HD): 
-                beta = iHD * np.pi*2 / N_HD  # from 0 to <2*pi
-                sa=np.sin(alfa)            
+            for iHD, beta in enumerate(betas):
                 v = np.array([sa*np.cos(beta), sa*np.sin(beta), np.cos(alfa)])
                 icounter = 0
-
-                # equiv_planes() calculates nfamily
-                hkl_family = normalized_equiv_planes(hkl, structure) # ??? why not outside iRD and iHD?
-
                 # print iRD, iHD, hkl_family
                 for ipl, hkl1 in enumerate(hkl_family):
-                    prodesc = np.dot(np.dot(euler_matrices, hkl1), v)
+                    prodesc = np.dot(euler_dot_hkl_family[ipl], v)
                     prodesc = np.abs(prodesc)
                     # prodesc is close to 1 means a match
                     icounter+= np.sum(prodesc >= matched_min)
