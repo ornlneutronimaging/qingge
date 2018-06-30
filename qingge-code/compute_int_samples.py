@@ -26,6 +26,7 @@ def compute(
         N_RD = 36,
         N_HD = 144,
         out = 'int_samples.dat',
+        hkls_out = 'hkls.txt',
         max_hkl_index=5,
         ):
     """
@@ -57,6 +58,7 @@ def compute(
     print d_spacing_list
     #
     outstream = open(out, 'wt')
+    hkls_outstream = open(hkls_out, 'wt')
     matched_min = np.cos(tolerance*np.pi/180.)
     
     RDs = np.arange(N_RD+1) * np.pi/2. / N_RD  # from 0 to pi/2
@@ -88,7 +90,49 @@ def compute(
                 ))
                 continue # iHD
             continue #iRD
+        hkls_outstream.write('%s\n' % (hkl,))
         continue #hkl
+    return
+
+
+def read_results(path):
+    "parse output file from compute method and reformat"
+    # implementation here is mostly copy of "calculate R.ipynb"
+    # read
+    samples = np.loadtxt(path)
+    hkl_indices = samples[:, 0]
+    counts = samples[:, 1]
+    polar_indices = samples[:, 2]
+    azimuthal_indices = samples[:, 3]
+    lambdas = samples[:, -1]
+    # reformat
+    Npolar = np.max(polar_indices)
+    assert Npolar == int(Npolar)
+    Npolar = int(Npolar)
+    Nazimuthal = np.max(azimuthal_indices)
+    assert Nazimuthal == int(Nazimuthal)
+    Nazimuthal = int(Nazimuthal)
+    nhkl = np.max(hkl_indices)
+    assert nhkl == int(nhkl)
+    nhkl = int(nhkl)
+    ncols = samples.size/(nhkl*Npolar*Nazimuthal)
+    assert nhkl*Npolar*Nazimuthal*ncols == samples.size
+    lambdas.shape = counts.shape = nhkl, Npolar, Nazimuthal
+    # wave length does not depend on azimuthal angle
+    lambdas1 = lambdas[:, :, 0]
+    for i in range(Nazimuthal):
+        assert (lambdas[:, :, i] == lambdas1).all()
+    lambdas = lambdas1
+    # for each hkl, normalize counts
+    norm_counts = np.zeros(counts.shape, dtype=float)
+    for i in range(nhkl):
+        ave = np.average(counts[i])
+        norm_counts[i, :] = counts[i] / ave
+    # Calculate R as a function of polar angle and hkl
+    R = np.average(norm_counts, axis=-1)
+    assert R.shape == (nhkl, Npolar)
+    # both have shape (nhkl, Npolar)
+    return lambdas, R
 
 
 def euler_angles2matrix(fi1, PHI, fi2, T):
